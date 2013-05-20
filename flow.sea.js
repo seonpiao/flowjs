@@ -1,6 +1,6 @@
 define("./index", [ "./util/class", "./flow", "./step", "./condition", "./input" ], function(require, exports, module) {
     window.Flowjs = {
-        V: "1.2.9",
+        V: "0.1.0",
         Class: require("./util/class"),
         Flow: require("./flow"),
         Step: require("./step"),
@@ -74,7 +74,7 @@ define("./util/baseobject", [], function(require, exports, module) {
     _Object.prototype = proto;
     module.exports = _Object;
 });;
-define("./flow", [ "./util/class", "./util/eventPlugin", "./util/extend", "./begin", "./step", "./input", "./condition", "./util/queue", "./util/flowData" ], function(require, exports, module) {
+define("./flow", [ "./util/class", "./util/eventPlugin", "./util/extend", "./begin", "./step", "./input", "./condition", "./util/queue", "./util/flowData", "./util/tool" ], function(require, exports, module) {
     var Class = require("./util/class");
     var EventPlugin = require("./util/eventPlugin");
     var extend = require("./util/extend");
@@ -84,6 +84,7 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/extend", "./beg
     var Condition = require("./condition");
     var Queue = require("./util/queue");
     var Data = require("./util/flowData");
+    var tool = require("./util/tool");
     var reserve = [];
     var Flow = Class({
         plugins: [ new EventPlugin ],
@@ -275,6 +276,11 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/extend", "./beg
                 var enterData = {};
                 extend(enterData, data);
                 step.enter(enterData, function(err, result) {
+                    if (result == enterData) {
+                        var err = "Can not use enterData as result";
+                        tool.error(err);
+                        throw new Error(err);
+                    }
                     for (var key in enterData) {
                         delete enterData[key];
                     }

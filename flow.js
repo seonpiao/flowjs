@@ -501,6 +501,7 @@
     var Condition = module.__11;
     var Queue = module.__12;
     var Data = module.__13;
+    var tool = module.__9;
     var reserve = [];
     var Flow = Class({
         plugins: [ new EventPlugin ],
@@ -692,6 +693,11 @@
                 var enterData = {};
                 extend(enterData, data);
                 step.enter(enterData, function(err, result) {
+                    if (result == enterData) {
+                        var err = "Can not use enterData as result";
+                        tool.error(err);
+                        throw new Error(err);
+                    }
                     for (var key in enterData) {
                         delete enterData[key];
                     }
@@ -704,7 +710,7 @@
     module.__3=Flow;
 })(_qc);(function (module) {
     window.Flowjs = {
-        V: "1.2.9",
+        V: "0.1.0",
         Class: module.__1,
         Flow: module.__3,
         Step: module.__7,

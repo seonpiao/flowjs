@@ -1,0 +1,20 @@
+define(function(require,exports,module){
+    module.exports = {
+        methods:{
+            _process:function(data,callback){
+                callback(null,{data:{list:[
+                    {title:Math.random().toString()},
+                    {title:Math.random().toString()},
+                    {title:Math.random().toString()},
+                    {title:Math.random().toString()},
+                    {title:Math.random().toString()},
+                    {title:Math.random().toString()},
+                    {title:Math.random().toString()},
+                    {title:Math.random().toString()},
+                    {title:Math.random().toString()},
+                    {title:Math.random().toString()}
+                ]}});
+            }
+        }
+    };
+});

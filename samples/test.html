@@ -1,0 +1,19 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flowjs Samples</title>
+</head>
+<body>
+  <div id="elementtest"></div>
+  <div id="mocha"></div>
+  <input type="button" value="btn"/>
+  <script src="http://static.qiyi.com/js/lib/sea1.2.js"></script>
+  <script>
+      seajs.use('../src/flows/test',function(Flow){
+        var flow = new Flow();
+        flow.start();
+      });
+  </script>
+</body>
+</html>

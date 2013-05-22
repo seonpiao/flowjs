@@ -19,6 +19,7 @@ define("./util/class", [ "./baseobject" ], function(require, exports, module) {
         var properties = data.properties || {};
         var methods = data.methods || {};
         var statics = data.statics || {};
+        var isAbstract = data.abstract === true;
         var proto = new superproto;
         var key;
         for (key in proto) {
@@ -36,6 +37,13 @@ define("./util/class", [ "./baseobject" ], function(require, exports, module) {
             var plugin = plugins[i];
             for (key in plugin) {
                 proto[key] = plugin[key];
+            }
+        }
+        if (!isAbstract) {
+            for (var method in proto) {
+                if (proto[method] == Class.abstractMethod) {
+                    throw new Error("Abstract method [" + method + "] is not implement.");
+                }
             }
         }
         proto.constructor = constructor;
@@ -107,8 +115,10 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/extend", "./beg
                 reserve.push(key);
             }
         },
+        "abstract": true,
         methods: {
-            start: Class.abstractMethod,
+            "abstract": true,
+            init: Class.abstractMethod,
             implement: function(stepName, options) {
                 var StepClass = Class({
                     extend: this.__steps[stepName],
@@ -120,6 +130,14 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/extend", "./beg
                 this.__stepInstances[stepName] = new StepClass({
                     description: stepName
                 });
+            },
+            destroy: function() {
+                var ins = this.__stepInstances;
+                for (var stepName in ins) {
+                    if (ins.hasOwnProperty(stepName)) {
+                        ins[stepName].destroy();
+                    }
+                }
             },
             _go: function(step, data, options) {
                 var _this = this;
@@ -379,7 +397,8 @@ define("./begin", [ "./util/class", "./step" ], function(require, exports, modul
         extend: Step,
         construct: function(options) {
             this.callsuper(options);
-        }
+        },
+        "abstract": true
     });
     module.exports = Begin;
 });;
@@ -391,6 +410,7 @@ define("./step", [ "./util/class", "./util/eventPlugin", "./util/checkData", "./
     var tool = require("./util/tool");
     var Step = Class({
         plugins: [ new EventPlugin ],
+        "abstract": true,
         construct: function(options) {
             options = options || {};
             this._data = {
@@ -424,6 +444,7 @@ define("./step", [ "./util/class", "./util/eventPlugin", "./util/checkData", "./
                     }
                 });
             },
+            destroy: Class.emptyMethod,
             _process: Class.abstractMethod,
             _describeData: function() {
                 return {};
@@ -602,6 +623,7 @@ define("./input", [ "./util/class", "./condition", "./util/extend" ], function(r
             this._inputs = options.inputs || {};
             this._binded = false;
         },
+        "abstract": true,
         methods: {
             _once: function(callback) {
                 if (!this._binded) {
@@ -630,6 +652,7 @@ define("./condition", [ "./util/class", "./step", "./util/extend" ], function(re
             this._cases = options.cases || {};
             this._default = options.defaultCase;
         },
+        "abstract": true,
         methods: {
             _select: function(condition, data) {
                 var fn = this._cases[condition] || this._default;

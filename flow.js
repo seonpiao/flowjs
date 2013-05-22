@@ -31,6 +31,7 @@
         var properties = data.properties || {};
         var methods = data.methods || {};
         var statics = data.statics || {};
+        var isAbstract = data.abstract === true;
         var proto = new superproto;
         var key;
         for (key in proto) {
@@ -48,6 +49,13 @@
             var plugin = plugins[i];
             for (key in plugin) {
                 proto[key] = plugin[key];
+            }
+        }
+        if (!isAbstract) {
+            for (var method in proto) {
+                if (proto[method] == Class.abstractMethod) {
+                    throw new Error("Abstract method [" + method + "] is not implement.");
+                }
             }
         }
         proto.constructor = constructor;
@@ -261,6 +269,7 @@
     var tool = module.__9;
     var Step = Class({
         plugins: [ new EventPlugin ],
+        "abstract": true,
         construct: function(options) {
             options = options || {};
             this._data = {
@@ -294,6 +303,7 @@
                     }
                 });
             },
+            destroy: Class.emptyMethod,
             _process: Class.abstractMethod,
             _describeData: function() {
                 return {};
@@ -351,7 +361,8 @@
         extend: Step,
         construct: function(options) {
             this.callsuper(options);
-        }
+        },
+        "abstract": true
     });
     module.__6=Begin;
 })(_qc);(function (module) {
@@ -366,6 +377,7 @@
             this._cases = options.cases || {};
             this._default = options.defaultCase;
         },
+        "abstract": true,
         methods: {
             _select: function(condition, data) {
                 var fn = this._cases[condition] || this._default;
@@ -401,6 +413,7 @@
             this._inputs = options.inputs || {};
             this._binded = false;
         },
+        "abstract": true,
         methods: {
             _once: function(callback) {
                 if (!this._binded) {
@@ -524,8 +537,10 @@
                 reserve.push(key);
             }
         },
+        "abstract": true,
         methods: {
-            start: Class.abstractMethod,
+            "abstract": true,
+            init: Class.abstractMethod,
             implement: function(stepName, options) {
                 var StepClass = Class({
                     extend: this.__steps[stepName],
@@ -537,6 +552,14 @@
                 this.__stepInstances[stepName] = new StepClass({
                     description: stepName
                 });
+            },
+            destroy: function() {
+                var ins = this.__stepInstances;
+                for (var stepName in ins) {
+                    if (ins.hasOwnProperty(stepName)) {
+                        ins[stepName].destroy();
+                    }
+                }
             },
             _go: function(step, data, options) {
                 var _this = this;

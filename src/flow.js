@@ -48,7 +48,9 @@ define(function(require,exports,module){
                 var ins = this.__stepInstances;
                 for(var stepName in ins){
                     if(ins.hasOwnProperty(stepName)){
-                        ins[stepName].destroy();
+                        var step = ins[stepName];
+                        var stepData = this.__getStepData(step);
+                        try{step.destroy(stepData);}catch(e){}
                     }
                 }
             },

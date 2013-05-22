@@ -23,7 +23,7 @@ define(function(require, exports, module) {
         },
         methods:{
             //初始化流程
-            start:function(){
+            init:function(){
                 var _this = this;
                 this._go('获取焦点图容器',{wrapper:this._wrapper});
                 this._go('获取焦点图数据');

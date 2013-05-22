@@ -6,6 +6,7 @@ define(function(require,exports,module){
     var tool = require('./util/tool');
     var Step = Class({
         plugins:[new EventPlugin()],
+        abstract:true,
         construct:function(options){
             options = options || {};
             // if(!options.description){
@@ -43,6 +44,8 @@ define(function(require,exports,module){
                     }
                 });
             },
+            //资源释放
+            destroy:Class.emptyMethod,
             _process:Class.abstractMethod,
             _describeData:function(){
                 return {};

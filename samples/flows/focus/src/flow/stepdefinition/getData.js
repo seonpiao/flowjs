@@ -5,8 +5,9 @@ define(function(require,exports,module){
         extend:Step,
         construct:function(options){
             this.callsuper(options);
-        }
+        },
+        abstract:true
     });
-    
+
     module.exports = FocusData;
 });

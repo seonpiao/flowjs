@@ -10,6 +10,7 @@ define(function(require,exports,module){
             this._cases = options.cases || {};
             this._default = options.defaultCase;
         },
+        abstract:true,
         methods:{
             _select:function(condition,data){
                 var fn = this._cases[condition] || this._default;

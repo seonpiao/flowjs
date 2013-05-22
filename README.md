@@ -141,3 +141,26 @@ v0.1.0发布
 ---------
 
 初始版本
+
+v0.2.0发布
+---------
+
+更新内容
+
+    流程初始化接口由 start 修改为 init 
+    抽象类的定义需要显式通过abstract属性来指定
+    Class方法加入对抽象方法实现的检查
+
+升级指导
+
+    改为调用init方法启动流程初始化
+    所有抽象类都需要加入abstract:true来显式指明该类是抽象类
+        extend:Step,
+        construct:function(options){
+            options = options || {};
+            this.callsuper(options);
+            this._cases = options.cases || {};
+            this._default = options.defaultCase;
+        },
+        abstract:true,
+        methods:{

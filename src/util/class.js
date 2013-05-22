@@ -11,6 +11,7 @@ define(function(require,exports,module){
         var properties = data.properties || {};
         var methods = data.methods || {};
         var statics = data.statics || {};
+        var isAbstract = (data.abstract === true);
         var proto = new superproto();
         var key;
         for(key in proto){
@@ -28,6 +29,14 @@ define(function(require,exports,module){
             var plugin = plugins[i];
             for(key in plugin){
                 proto[key] = plugin[key];
+            }
+        }
+        //check abstract method
+        if(!isAbstract){
+            for(var method in proto){
+                if(proto[method] == Class.abstractMethod){
+                    throw new Error('Abstract method [' + method + '] is not implement.');
+                }
             }
         }
         proto.constructor = constructor;

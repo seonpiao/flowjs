@@ -28,9 +28,11 @@ define(function(require,exports,module){
                 reserve.push(key);
             }
         },
+        abstract:true,
         methods:{
+            abstract:true,
             //初始化流程
-            start:Class.abstractMethod,
+            init:Class.abstractMethod,
             implement:function(stepName,options){
                 var StepClass = Class({
                     extend:this.__steps[stepName],
@@ -40,6 +42,15 @@ define(function(require,exports,module){
                     methods:options.methods
                 });
                 this.__stepInstances[stepName] = new StepClass({description:stepName});
+            },
+            //销毁流程，释放资源
+            destroy:function(){
+                var ins = this.__stepInstances;
+                for(var stepName in ins){
+                    if(ins.hasOwnProperty(stepName)){
+                        ins[stepName].destroy();
+                    }
+                }
             },
             _go:function(step,data,options){
                 var _this = this;

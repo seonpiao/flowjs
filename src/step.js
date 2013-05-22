@@ -45,7 +45,7 @@ define(function(require,exports,module){
                 });
             },
             //资源释放
-            destroy:Class.emptyMethod,
+            destroy:function(){},
             _process:Class.abstractMethod,
             _describeData:function(){
                 return {};

@@ -162,5 +162,5 @@ v0.2.0发布
             this._cases = options.cases || {};
             this._default = options.defaultCase;
         },
-        abstract:true,
+        isAbstract:true,
         methods:{

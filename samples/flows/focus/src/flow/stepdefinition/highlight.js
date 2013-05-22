@@ -6,7 +6,7 @@ define(function(require,exports,module){
         construct:function(options){
             this.callsuper(options);
         },
-        abstract:true,
+        isAbstract:true,
         methods:{
             _describeData:function(){
                 return {

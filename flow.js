@@ -269,7 +269,7 @@
     var tool = module.__9;
     var Step = Class({
         plugins: [ new EventPlugin ],
-        "abstract": true,
+        isAbstract: true,
         construct: function(options) {
             options = options || {};
             this._data = {
@@ -303,7 +303,7 @@
                     }
                 });
             },
-            destroy: Class.emptyMethod,
+            destroy: function() {},
             _process: Class.abstractMethod,
             _describeData: function() {
                 return {};
@@ -557,7 +557,11 @@
                 var ins = this.__stepInstances;
                 for (var stepName in ins) {
                     if (ins.hasOwnProperty(stepName)) {
-                        ins[stepName].destroy();
+                        var step = ins[stepName];
+                        var stepData = this.__getStepData(step);
+                        try {
+                            step.destroy(stepData);
+                        } catch (e) {}
                     }
                 }
             },

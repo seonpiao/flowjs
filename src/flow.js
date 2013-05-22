@@ -28,9 +28,8 @@ define(function(require,exports,module){
                 reserve.push(key);
             }
         },
-        abstract:true,
+        isAbstract:true,
         methods:{
-            abstract:true,
             //初始化流程
             init:Class.abstractMethod,
             implement:function(stepName,options){

@@ -11,7 +11,7 @@ define(function(require,exports,module){
         var properties = data.properties || {};
         var methods = data.methods || {};
         var statics = data.statics || {};
-        var isAbstract = (data.abstract === true);
+        var isAbstract = (data.isAbstract === true);
         var proto = new superproto();
         var key;
         for(key in proto){

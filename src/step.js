@@ -6,7 +6,7 @@ define(function(require,exports,module){
     var tool = require('./util/tool');
     var Step = Class({
         plugins:[new EventPlugin()],
-        abstract:true,
+        isAbstract:true,
         construct:function(options){
             options = options || {};
             // if(!options.description){

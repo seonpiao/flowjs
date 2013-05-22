@@ -10,7 +10,7 @@ define(function(require,exports,module){
             this._inputs = options.inputs || {};
             this._binded = false;
         },
-        abstract:true,
+        isAbstract:true,
         methods:{
             //为了该步骤可重入，并且不会重复绑定事件
             _once:function(callback){

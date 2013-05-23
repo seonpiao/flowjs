@@ -38,20 +38,20 @@ Flow定义
                 //初始化流程
                 start:function(){
                     var _this = this;
-                    this.go('step1');
-                    this.go('step2');
-                    this.go('step3');
-                    this.go('step4');
-                    this.go('step5',null,{
+                    this._go('step1');
+                    this._go('step2');
+                    this._go('step3');
+                    this._go('step4');
+                    this._go('step5',null,{
                         cases:{
                             '1':function(){
-                                _this.go('step1');
+                                _this._go('step1');
                             },
                             '2':function(){
-                                _this.go('step6');
+                                _this._go('step6');
                             }
                         },defaultCase:function(){
-                            _this.go('step4');
+                            _this._go('step4');
                         }
                     });
                 }
@@ -81,6 +81,7 @@ Step定义
         var Step = Flowjs.Step;
         var Next = Class({
             extend:Step,
+            isAbstract:true,
             construct:function(options){
                 this.callsuper(options);
             },

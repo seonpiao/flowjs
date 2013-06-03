@@ -133,9 +133,6 @@ define(function(require,exports,module){
                 callback();
                 this.__sync = false;
             },
-            _steps:function(){
-                return this.__steps;
-            },
             _addStep:function(name,StepClass){
                 this.__steps[name] = StepClass;
             },

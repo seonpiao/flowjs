@@ -138,11 +138,15 @@ Flow
 
     init：function(){}
 
-        抽象方法，子类需要实现该方法来定义流程。
+        abstract
+
+        子类需要实现该方法来定义流程。
 
     implement：function(stepName,options){}
 
-        公共方法。实现流程中的一个步骤。
+        public
+
+        实现流程中的一个步骤。
 
         stepName
 
@@ -155,6 +159,98 @@ Flow
         options.methods
 
             步骤类的方法
+
+    destroy：function(){}
+
+        public
+
+        销毁流程，会调用每一个执行过的步骤的destroy方法，让每个步骤有机会去释放资源。
+
+    _go：function(step,data,options){}
+
+        protected
+
+        执行到指定的步骤
+
+        step
+
+            步骤名
+
+        data
+
+            需要传入步骤的数据，优先级高于数据池中的数据。
+
+        options.inputs
+
+            定义传入Input类型步骤的输入项
+
+        options.cases
+
+            定义传入Condition类型步骤的分支项
+
+    _pause：function(){}
+
+        protected
+
+        暂停流程
+
+    _resume：function(){}
+
+        protected
+
+        从暂停的步骤开始恢复流程
+
+    _sync：function(callback){}
+
+        protected
+
+        同步执行callback中执行的步骤。
+
+        callback
+
+            可以在改callback中同步的执行步骤
+
+    _addStep：function(name,StepClass){}
+
+        protected
+
+        向流程注册步骤
+
+        name
+
+            定义步骤名
+
+        StepClass
+
+            步骤的定义类
+
+    _addInterface：function(name,fn){}
+
+        protected
+
+        向流程添加接口
+
+        name
+
+            接口名
+
+        fn
+
+            接口实现
+
+    _getData：function(keys){}
+
+        protected
+
+        获取数据池中的数据
+
+        keys
+
+            数据的key。可以是单个key的字符串，也可以是由多个key组成的字符串数组
+
+        返回
+
+            带有keys的数据对象
 
 Step
 

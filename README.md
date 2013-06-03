@@ -137,16 +137,23 @@ API
 Flow
 
 init：function(){}
+
 抽象方法，子类需要实现该方法来定义流程。
 
 implement：function(stepName,options){}
+
 公共方法。实现流程中的一个步骤。
+
 stepName
+
 步骤名
 
 options.construct
+
 步骤类的构造函数
+
 options.methods
+
 步骤类的方法
 
 Step

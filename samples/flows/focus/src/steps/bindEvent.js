@@ -10,8 +10,11 @@ define(function(require,exports,module){
                 var imgwrapper = wrapper.down('[data-focus-elem=imgwrapper]');
                 this._once(function(){
                     smalls.on("mouseover",function(e){
-                        var target = Q.$(Q.event.get(e).target);
-                        if(target.attr('data-focus-index')){
+                        var target = Q.$(Q.event.get(e).currentTarget);
+                        while(target && !target.attr('data-focus-index')){
+                            target = target.parent();
+                        }
+                        if(target){
                             var curr = parseInt(target.attr('data-focus-index'),10);
                             _this._select('click',{goto:curr});
                         }

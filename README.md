@@ -131,6 +131,30 @@ Step定义
 
 以上定义了一个步骤，要求输入的数据对象结构为：{curr:1,frames:{}}；输出的数据对象结果为{curr:2}
 
+API
+---------
+
+Flow
+
+init：function(){}
+抽象方法，子类需要实现该方法来定义流程。
+
+implement：function(stepName,options){}
+公共方法。实现流程中的一个步骤。
+stepName
+步骤名
+
+options.construct
+步骤类的构造函数
+options.methods
+步骤类的方法
+
+Step
+
+Condition
+
+Input
+
 注意事项
 ---------
 

@@ -1,0 +1,33 @@
+*{
+	margin: 0;
+	padding: 0;
+}
+
+body{
+	padding: 20px;
+}
+
+ul{
+	list-style: none;
+}
+
+.tab-title{
+	display: inline-block;
+	padding: 5px 10px;
+
+	cursor: pointer;
+}
+
+.tab-title.current{
+	background-color: #f0f0f0;
+}
+
+.tab-content{
+	display: none;
+	padding: 10px 10px;
+}
+
+.tab-content.current{
+	display: block;
+	background-color: #f0f0f0;
+}

@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Tabs checkout with Flowjs</title>
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+    </head>
+    <body>
+        <div class="tabs-container" data-widget-tabs="tabs">
+            
+        </div>
+        <script type="text/javascript" src="http://static.qiyi.com/js/lib/sea1.2.js"></script>
+        <script>
+            seajs.config({
+                alias:{
+                    'Flowjs':'./lib/flowjs/index'
+                }
+            });
+            seajs.use('Flowjs',function(Flowjs){
+                seajs.use('./tabs',function(tabs){
+                    window.tabs = tabs;
+                    tabs.init();
+                });
+            });
+        </script>
+    </body>
+</html>

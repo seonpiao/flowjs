@@ -1,0 +1,10 @@
+<ul class="tabs-title">
+    <%for(i = 0; i < list.length; i ++) {%>
+    	<li class="tab-title" data-tabs-elem="title"><%=list[i].title%></li>
+    <%}%>
+</ul>
+<ul class="tabs-content">
+    <%for(i = 0; i < list.length; i ++) {%>
+    	<li class="tab-content" data-tabs-elem="content"><%=list[i].content%></li>
+    <%}%>
+</ul>

@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Focus sample</title>
+    </head>
+    <body>
+        <script type="text/javascript" src="http://static.qiyi.com/js/lib/sea1.2.js"></script>
+        <script>
+            seajs.config({
+                alias:{
+                    'Flowjs':'../../../../src/index'
+                }
+            });
+            seajs.use('Flowjs',function(Flowjs){
+                seajs.use('./test',function(test){
+                    test.init();
+                    var d1 = Date.now();
+                    for(var i = 0; i < 200; i++){
+
+                    }
+                    var d2 = Date.now();
+                    console.log('Cost1:' + (d2 - d1));
+                    for(var i = 0; i < 200; i++){
+                        (function(){})();
+                    }
+                    var d3 = Date.now();
+                    console.log('Cost2:' + (d3 - d2));
+                });
+            });
+        </script>
+    </body>
+</html>

@@ -24,6 +24,7 @@ define(function(require,exports,module){
             this.__interfaces = {};
             this.__pausing = {};
             this.__working = {};
+            this.__stepCount = 0;
             for(var key in this){
                 reserve.push(key);
             }
@@ -165,7 +166,18 @@ define(function(require,exports,module){
                     if(!this.__sync){
                         var next = this.__getNext(step);
                         if(next){
-                            this.__process(next.step,next.data);
+                            this.__stepCount++;
+                            if(this.__stepCount < 20){
+                                this.__process(next.step,next.data);
+                            }
+                            //为了防止栈溢出，连续执行20步后，就退出当前调用栈
+                            else{
+                                this.__stepCount = 0;
+                                var _this = this;
+                                setTimeout(function(){
+                                    _this.__process(next.step,next.data);
+                                },0);
+                            }
                         }
                     }
                 });

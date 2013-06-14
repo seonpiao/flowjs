@@ -31,7 +31,7 @@
         var properties = data.properties || {};
         var methods = data.methods || {};
         var statics = data.statics || {};
-        var isAbstract = data.abstract === true;
+        var isAbstract = data.isAbstract === true;
         var proto = new superproto;
         var key;
         for (key in proto) {
@@ -362,7 +362,7 @@
         construct: function(options) {
             this.callsuper(options);
         },
-        "abstract": true
+        isAbstract: true
     });
     module.__6=Begin;
 })(_qc);(function (module) {
@@ -377,7 +377,7 @@
             this._cases = options.cases || {};
             this._default = options.defaultCase;
         },
-        "abstract": true,
+        isAbstract: true,
         methods: {
             _select: function(condition, data) {
                 var fn = this._cases[condition] || this._default;
@@ -413,7 +413,7 @@
             this._inputs = options.inputs || {};
             this._binded = false;
         },
-        "abstract": true,
+        isAbstract: true,
         methods: {
             _once: function(callback) {
                 if (!this._binded) {
@@ -533,13 +533,13 @@
             this.__interfaces = {};
             this.__pausing = {};
             this.__working = {};
+            this.__stepCount = 0;
             for (var key in this) {
                 reserve.push(key);
             }
         },
-        "abstract": true,
+        isAbstract: true,
         methods: {
-            "abstract": true,
             init: Class.abstractMethod,
             implement: function(stepName, options) {
                 var StepClass = Class({
@@ -636,9 +636,6 @@
                 callback();
                 this.__sync = false;
             },
-            _steps: function() {
-                return this.__steps;
-            },
             _addStep: function(name, StepClass) {
                 this.__steps[name] = StepClass;
             },
@@ -670,7 +667,16 @@
                     if (!this.__sync) {
                         var next = this.__getNext(step);
                         if (next) {
-                            this.__process(next.step, next.data);
+                            this.__stepCount++;
+                            if (this.__stepCount < 20) {
+                                this.__process(next.step, next.data);
+                            } else {
+                                this.__stepCount = 0;
+                                var _this = this;
+                                setTimeout(function() {
+                                    _this.__process(next.step, next.data);
+                                }, 0);
+                            }
                         }
                     }
                 });
@@ -737,7 +743,7 @@
     module.__3=Flow;
 })(_qc);(function (module) {
     window.Flowjs = {
-        V: "0.1.0",
+        V: "0.2.1",
         Class: module.__1,
         Flow: module.__3,
         Step: module.__7,

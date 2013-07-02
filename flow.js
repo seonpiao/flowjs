@@ -184,32 +184,36 @@
             if (!struct) {
                 return true;
             }
-            var result = true;
-            for (var key in struct) {
+            var result = true, err;
+            for (var key in data) {
+                if (!struct.hasOwnProperty(key)) {
+                    delete data[key];
+                    continue;
+                }
                 var item = struct[key];
                 if (struct[key].empty !== true && self.isEmpty(struct[key], data[key])) {
-                    var err = "字段[" + key + "]值为空";
+                    err = "字段[" + key + "]值为空";
                     tool.error(err);
                     throw new Error(err);
                 } else if (struct[key].empty === true && self.isEmpty(struct[key], data[key])) {
                     continue;
                 } else if (struct[key].type == "number" && typeof data[key] != "number") {
-                    var err = "字段[" + key + "]不是数字";
+                    err = "字段[" + key + "]不是数字";
                     tool.error(err);
                     throw new Error(err);
                 } else if (struct[key].type == "string" && typeof data[key] != "string") {
-                    var err = "字段[" + key + "]不是字符串";
+                    err = "字段[" + key + "]不是字符串";
                     tool.error(err);
                     throw new Error(err);
                 } else if (struct[key].type == "array") {
                     if (!self.checkArray(struct[key], data[key])) {
-                        var err = "字段[" + key + "]值与定义不符";
+                        err = "字段[" + key + "]值与定义不符";
                         tool.error(err);
                         throw new Error(err);
                     }
                 } else if (struct[key].type == "object") {
                     if (!self.checkObject(struct[key].struct, data[key])) {
-                        var err = "字段[" + key + "]值与定义不符";
+                        err = "字段[" + key + "]值与定义不符";
                         tool.error(err);
                         throw new Error(err);
                     }
@@ -739,7 +743,7 @@
     module.__3=Flow;
 })(_qc);(function (module) {
     window.Flowjs = {
-        V: "0.2.2",
+        V: "0.2.3",
         Class: module.__1,
         Flow: module.__3,
         Step: module.__7,

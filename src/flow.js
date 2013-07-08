@@ -85,7 +85,10 @@ define(function(require,exports,module){
                         try{
                             this.__process(item.step,stepData);
                         }
-                        catch(e){}
+                        catch(e){
+                            _this.__queue.clear();
+                            throw e;
+                        }
                         this.__timer = setTimeout(function(){
                             //执行到此，说明一个流程链已经完成，当前步骤为该流程链的末端，不允许再有下一步了
                             step.end();

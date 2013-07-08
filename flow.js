@@ -603,7 +603,10 @@
                         extend(stepData, item.data);
                         try {
                             this.__process(item.step, stepData);
-                        } catch (e) {}
+                        } catch (e) {
+                            _this.__queue.clear();
+                            throw e;
+                        }
                         this.__timer = setTimeout(function() {
                             step.end();
                             _this.__queue.clear();

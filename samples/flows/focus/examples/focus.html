@@ -156,18 +156,19 @@
             </div>
         </div>
         <script type="text/javascript" src="http://static.qiyi.com/js/lib/sea1.2.js"></script>
+        <script type="text/javascript" src="../../../../flow.js"></script>
         <script>
             seajs.config({
                 alias:{
                     'Flowjs':'../../../../src/index'
                 }
             });
-            seajs.use('Flowjs',function(Flowjs){
+            // seajs.use('Flowjs',function(Flowjs){
                 seajs.use('./focus',function(focus){
                     window.focus = focus;
                     focus.init();
                 });
-            });
+            // });
         </script>
     </body>
 </html>

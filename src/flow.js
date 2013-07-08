@@ -82,10 +82,14 @@ define(function(require,exports,module){
                         var item = this.__queue.dequeue();
                         var stepData = this.__getStepData(item.step);
                         extend(stepData,item.data);
-                        this.__process(item.step,stepData);
+                        try{
+                            this.__process(item.step,stepData);
+                        }
+                        catch(e){}
                         this.__timer = setTimeout(function(){
                             //执行到此，说明一个流程链已经完成，当前步骤为该流程链的末端，不允许再有下一步了
                             step.end();
+                            _this.__queue.clear();
                         },0);
                     }
                     else{
@@ -93,6 +97,7 @@ define(function(require,exports,module){
                             //执行到此，说明一个流程链已经完成，当前步骤为该流程链的末端，不允许再有下一步了
                             step.end();
                             _this.__start();
+                            _this.__queue.clear();
                         },0);
                     }
                 }
@@ -112,7 +117,6 @@ define(function(require,exports,module){
                         delete this.__working[key];
                     }
                 }
-                this.__queue.clear();
                 //查看是否有泄露
                 // console.log(Object.keys(this.__working));
                 // console.log(Object.keys(this.__pausing));
@@ -191,23 +195,12 @@ define(function(require,exports,module){
             },
             __getNext:function(step){
                 var result = step.__result,next = null;
-                var item = this.__queue.dequeue();
-                if(item){
-                    var data = this.__getStepData(item.step);
-                    extend(data,item.data);
+                var ns = step.next();
+                if(ns){
                     next = {
-                        step:item.step,
-                        data:data
+                        step:ns,
+                        data:this.__getStepData(ns)
                     };
-                }
-                else{
-                    var ns = step.next();
-                    if(ns){
-                        next = {
-                            step:ns,
-                            data:this.__getStepData(ns)
-                        };
-                    }
                 }
                 return next;
             },

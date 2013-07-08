@@ -6,12 +6,14 @@ define(function (require, exports, module) {
             if (!struct) {
                 return true;
             }
-            var result = true,err;
-            for(var key in data){
+            var result = true,err,key;
+            for(key in data){
                 if(!struct.hasOwnProperty(key)){
                     delete data[key];
                     continue;
                 }
+            }
+            for(key in struct){
                 var item = struct[key];
                 //空值检测
                 if(struct[key].empty !== true && self.isEmpty(struct[key], data[key])){

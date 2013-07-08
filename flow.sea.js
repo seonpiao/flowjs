@@ -1,6 +1,6 @@
 define("./index", [ "./util/class", "./flow", "./step", "./condition", "./input" ], function(require, exports, module) {
     window.Flowjs = {
-        V: "0.2.3",
+        V: "0.2.4",
         Class: require("./util/class"),
         Flow: require("./flow"),
         Step: require("./step"),
@@ -173,14 +173,18 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/extend", "./beg
                         var item = this.__queue.dequeue();
                         var stepData = this.__getStepData(item.step);
                         extend(stepData, item.data);
-                        this.__process(item.step, stepData);
+                        try {
+                            this.__process(item.step, stepData);
+                        } catch (e) {}
                         this.__timer = setTimeout(function() {
                             step.end();
+                            _this.__queue.clear();
                         }, 0);
                     } else {
                         this.__timer = setTimeout(function() {
                             step.end();
                             _this.__start();
+                            _this.__queue.clear();
                         }, 0);
                     }
                 } else {
@@ -198,7 +202,6 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/extend", "./beg
                         delete this.__working[key];
                     }
                 }
-                this.__queue.clear();
             },
             _resume: function() {
                 for (var key in this.__pausing) {
@@ -268,22 +271,12 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/extend", "./beg
             },
             __getNext: function(step) {
                 var result = step.__result, next = null;
-                var item = this.__queue.dequeue();
-                if (item) {
-                    var data = this.__getStepData(item.step);
-                    extend(data, item.data);
+                var ns = step.next();
+                if (ns) {
                     next = {
-                        step: item.step,
-                        data: data
+                        step: ns,
+                        data: this.__getStepData(ns)
                     };
-                } else {
-                    var ns = step.next();
-                    if (ns) {
-                        next = {
-                            step: ns,
-                            data: this.__getStepData(ns)
-                        };
-                    }
                 }
                 return next;
             },
@@ -510,12 +503,14 @@ define("./util/checkData", [ "./tool" ], function(require, exports, module) {
             if (!struct) {
                 return true;
             }
-            var result = true, err;
-            for (var key in data) {
+            var result = true, err, key;
+            for (key in data) {
                 if (!struct.hasOwnProperty(key)) {
                     delete data[key];
                     continue;
                 }
+            }
+            for (key in struct) {
                 var item = struct[key];
                 if (struct[key].empty !== true && self.isEmpty(struct[key], data[key])) {
                     err = "字段[" + key + "]值为空";

@@ -6,8 +6,8 @@ define(function(require,exports,module){
                 var titles = wrapper.down('[data-tabs-elem=title]');
                 var contents = wrapper.down('[data-tabs-elem=content]');
                 callback(null, {
-                    titles: titles,
-                    contents:contents
+                    titleContainers: titles,
+                    contentContainers:contents
                 });
             }
         }

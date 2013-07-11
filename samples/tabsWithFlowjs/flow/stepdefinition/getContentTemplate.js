@@ -1,7 +1,7 @@
 define(function(require,exports,module){
     var Class = Flowjs.Class;
     var Step = Flowjs.Step;
-    var TabsData = Class({
+    var TabsTemplate = Class({
         extend:Step,
         construct:function(options){
             this.callsuper(options);
@@ -11,13 +11,13 @@ define(function(require,exports,module){
             _describeData:function(){
                 return {
                     input:{
-                        dataURL:{
+                        contentTemplateURL:{
                             type:'string'
                         }
                     },
                     output:{
-                        data:{
-                            type:'object'
+                        contentTemplate:{
+                            type:'string'
                         }
                     }
                 };
@@ -25,5 +25,5 @@ define(function(require,exports,module){
         }
     });
 
-    module.exports = TabsData;
+    module.exports = TabsTemplate;
 });

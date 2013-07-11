@@ -1,7 +1,7 @@
 define(function(require,exports,module){
     var Class = Flowjs.Class;
     var Step = Flowjs.Step;
-    var TabsData = Class({
+    var FocusGenerator = Class({
         extend:Step,
         construct:function(options){
             this.callsuper(options);
@@ -11,19 +11,22 @@ define(function(require,exports,module){
             _describeData:function(){
                 return {
                     input:{
-                        dataURL:{
-                            type:'string'
+                        contentWrapper: {
+                            type: 'object'
                         }
                     },
                     output:{
-                        data:{
-                            type:'object'
+                        contentDataURL: {
+                            type: 'string'
+                        },
+                        contentTemplateURL: {
+                            type: 'string'
                         }
                     }
                 };
             }
         }
     });
-
-    module.exports = TabsData;
+    
+    module.exports = FocusGenerator;
 });

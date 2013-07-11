@@ -1,14 +1,23 @@
-[
-{
-	"title" : "coder",
-	"content" : "people who codes."
-},
-{
-	"title" : "writer",
-	"content" : "people who writes."
-},
-{
-	"title" : "user",
-	"content" : "people who uses."
-}
-]
+{"list" : [
+	{
+		"title" : "coder",
+		"content" : {
+			"dataURL" : "http://static.iqiyi.com/others/tabsWithFlowjs/data/jobs/coder.json",
+			"templateURL" : "http://static.iqiyi.com/others/tabsWithFlowjs/templates/tabs/job.html"
+		}
+	},
+	{
+		"title" : "writer",
+		"content" : {
+			"dataURL" : "http://static.iqiyi.com/others/tabsWithFlowjs/data/jobs/writer.json",
+			"templateURL" : "http://static.iqiyi.com/others/tabsWithFlowjs/templates/tabs/job.html"
+		}
+	},
+	{
+		"title" : "user",
+		"content" : {
+			"dataURL" : "http://static.iqiyi.com/others/tabsWithFlowjs/data/jobs/user.json",
+			"templateURL" : "http://static.iqiyi.com/others/tabsWithFlowjs/templates/tabs/job.html"
+		}
+	}
+]}

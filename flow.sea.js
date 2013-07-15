@@ -1,6 +1,6 @@
 define("./index", [ "./util/class", "./flow", "./step", "./condition", "./input" ], function(require, exports, module) {
     window.Flowjs = {
-        V: "0.2.4",
+        V: "0.2.5",
         Class: require("./util/class"),
         Flow: require("./flow"),
         Step: require("./step"),
@@ -161,9 +161,9 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/extend", "./beg
                             step.inputs(options);
                         }
                     }
+                    step.__paramData = data;
                     this.__queue.enqueue({
-                        step: step,
-                        data: data
+                        step: step
                     });
                     if (this.__prev) {
                         this.__prev.next(step);
@@ -172,7 +172,7 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/extend", "./beg
                     if (this.__sync) {
                         var item = this.__queue.dequeue();
                         var stepData = this.__getStepData(item.step);
-                        extend(stepData, item.data);
+                        extend(stepData, item.step.__paramData);
                         try {
                             this.__process(item.step, stepData);
                         } catch (e) {
@@ -237,7 +237,7 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/extend", "./beg
                 var item = this.__queue.dequeue();
                 if (item) {
                     var data = this.__getStepData(item.step);
-                    extend(data, item.data);
+                    extend(data, item.step.__paramData);
                     this.__process(item.step, data);
                 }
             },

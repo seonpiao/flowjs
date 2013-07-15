@@ -110,6 +110,7 @@ define(function(require,exports,module){
                     this.__timer = setTimeout(function(){
                         _this.__prev.end();
                         _this.__start();
+                        _this.__queue.clear();
                     },0);
                 }
             },

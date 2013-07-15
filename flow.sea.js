@@ -1,6 +1,6 @@
 define("./index", [ "./util/class", "./flow", "./step", "./condition", "./input" ], function(require, exports, module) {
     window.Flowjs = {
-        V: "0.2.6",
+        V: "0.2.7",
         Class: require("./util/class"),
         Flow: require("./flow"),
         Step: require("./step"),
@@ -194,6 +194,7 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/deepExtend", ".
                     this.__timer = setTimeout(function() {
                         _this.__prev.end();
                         _this.__start();
+                        _this.__queue.clear();
                     }, 0);
                 }
             },

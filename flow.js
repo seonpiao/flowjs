@@ -657,6 +657,7 @@
                     this.__timer = setTimeout(function() {
                         _this.__prev.end();
                         _this.__start();
+                        _this.__queue.clear();
                     }, 0);
                 }
             },
@@ -781,7 +782,7 @@
     module.__3=Flow;
 })(_qc);(function (module) {
     window.Flowjs = {
-        V: "0.2.6",
+        V: "0.2.7",
         Class: module.__1,
         Flow: module.__3,
         Step: module.__7,

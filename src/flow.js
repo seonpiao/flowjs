@@ -73,7 +73,8 @@ define(function(require,exports,module){
                             step.inputs(options);
                         }
                     }
-                    this.__queue.enqueue({step:step,data:data});
+                    step.__paramData = data;
+                    this.__queue.enqueue({step:step});
                     if(this.__prev){
                         this.__prev.next(step);
                     }
@@ -81,7 +82,7 @@ define(function(require,exports,module){
                     if(this.__sync){
                         var item = this.__queue.dequeue();
                         var stepData = this.__getStepData(item.step);
-                        extend(stepData,item.data);
+                        extend(stepData,item.step.__paramData);
                         try{
                             this.__process(item.step,stepData);
                         }
@@ -158,7 +159,7 @@ define(function(require,exports,module){
                 var item = this.__queue.dequeue();
                 if(item){
                     var data = this.__getStepData(item.step);
-                    extend(data,item.data);
+                    extend(data,item.step.__paramData);
                     this.__process(item.step,data);
                 }
             },

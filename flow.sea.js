@@ -276,9 +276,11 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/extend", "./beg
                 var result = step.__result, next = null;
                 var ns = step.next();
                 if (ns) {
+                    var stepData = this.__getStepData(ns);
+                    extend(stepData, ns.__paramData);
                     next = {
                         step: ns,
-                        data: this.__getStepData(ns)
+                        data: stepData
                     };
                 }
                 return next;
@@ -299,7 +301,10 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/extend", "./beg
                 var _this = this;
                 var enterData = {};
                 extend(enterData, data);
+                var entered = false;
                 step.enter(enterData, function(err, result) {
+                    if (entered) return;
+                    entered = true;
                     var stepData = extend({}, result);
                     for (var key in enterData) {
                         delete enterData[key];

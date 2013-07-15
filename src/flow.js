@@ -1,7 +1,7 @@
 define(function(require,exports,module){
     var Class = require('./util/class');
     var EventPlugin = require('./util/eventPlugin');
-    var extend = require('./util/extend');
+    var extend = require('./util/deepExtend');
     var Begin = require('./begin');
     var Step = require('./step');
     var Input = require('./input');
@@ -220,7 +220,7 @@ define(function(require,exports,module){
                         }
                     }
                 }
-                return this.__data.getData(dataNames);
+                return extend({},this.__data.getData(dataNames));
             },
             __enter:function(step,data,callback){
                 var _this = this;

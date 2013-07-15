@@ -1,6 +1,6 @@
 define("./index", [ "./util/class", "./flow", "./step", "./condition", "./input" ], function(require, exports, module) {
     window.Flowjs = {
-        V: "0.2.5",
+        V: "0.2.6",
         Class: require("./util/class"),
         Flow: require("./flow"),
         Step: require("./step"),
@@ -82,10 +82,10 @@ define("./util/baseobject", [], function(require, exports, module) {
     _Object.prototype = proto;
     module.exports = _Object;
 });;
-define("./flow", [ "./util/class", "./util/eventPlugin", "./util/extend", "./begin", "./step", "./input", "./condition", "./util/queue", "./util/flowData", "./util/tool" ], function(require, exports, module) {
+define("./flow", [ "./util/class", "./util/eventPlugin", "./util/deepExtend", "./begin", "./step", "./input", "./condition", "./util/queue", "./util/flowData", "./util/tool" ], function(require, exports, module) {
     var Class = require("./util/class");
     var EventPlugin = require("./util/eventPlugin");
-    var extend = require("./util/extend");
+    var extend = require("./util/deepExtend");
     var Begin = require("./begin");
     var Step = require("./step");
     var Input = require("./input");
@@ -295,7 +295,7 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/extend", "./beg
                         }
                     }
                 }
-                return this.__data.getData(dataNames);
+                return extend({}, this.__data.getData(dataNames));
             },
             __enter: function(step, data, callback) {
                 var _this = this;
@@ -386,14 +386,39 @@ define("./util/eventPlugin", [ "./class" ], function(require, exports, module) {
     });
     module.exports = EventPlugin;
 });;
-define("./util/extend", [], function(require, exports, module) {
-    var extend = function(target, source) {
-        for (var p in source) {
-            if (source.hasOwnProperty(p)) {
-                target[p] = source[p];
+define("./util/deepExtend", [], function(require, exports, module) {
+    var isArray = Array.isArray || function(arg) {
+        return Object.prototype.toString.call(arg) == "[object Array]";
+    };
+    var isObject = function(arg) {
+        return Object.prototype.toString.call(arg) == "[object Object]";
+    };
+    var extend = function(dest, object) {
+        var second, options, key, src, copy, i = 1, n = arguments.length, result = dest, copyIsArray, clone;
+        for (; i < n; i++) {
+            options = arguments[i];
+            if (isObject(options) || isArray(options)) {
+                for (key in options) {
+                    src = result[key];
+                    copy = options[key];
+                    if (src === copy) {
+                        continue;
+                    }
+                    if (copy && (isObject(copy) || (copyIsArray = isArray(copy)))) {
+                        if (copyIsArray) {
+                            copyIsArray = false;
+                            clone = src && isArray(src) ? src : [];
+                        } else {
+                            clone = src && isObject(src) ? src : {};
+                        }
+                        result[key] = extend(clone, copy);
+                    } else if (copy !== undefined) {
+                        result[key] = copy;
+                    }
+                }
             }
         }
-        return target;
+        return result;
     };
     module.exports = extend;
 });;
@@ -623,6 +648,17 @@ define("./util/tool", [], function(require, exports, module) {
             }
         }
     };
+});;
+define("./util/extend", [], function(require, exports, module) {
+    var extend = function(target, source) {
+        for (var p in source) {
+            if (source.hasOwnProperty(p)) {
+                target[p] = source[p];
+            }
+        }
+        return target;
+    };
+    module.exports = extend;
 });;
 define("./input", [ "./util/class", "./condition", "./util/extend" ], function(require, exports, module) {
     var Class = require("./util/class");

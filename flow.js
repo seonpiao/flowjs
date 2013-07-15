@@ -139,13 +139,38 @@
     });
     module.__4=EventPlugin;
 })(_qc);(function (module) {
-    var extend = function(target, source) {
-        for (var p in source) {
-            if (source.hasOwnProperty(p)) {
-                target[p] = source[p];
+    var isArray = Array.isArray || function(arg) {
+        return Object.prototype.toString.call(arg) == "[object Array]";
+    };
+    var isObject = function(arg) {
+        return Object.prototype.toString.call(arg) == "[object Object]";
+    };
+    var extend = function(dest, object) {
+        var second, options, key, src, copy, i = 1, n = arguments.length, result = dest, copyIsArray, clone;
+        for (; i < n; i++) {
+            options = arguments[i];
+            if (isObject(options) || isArray(options)) {
+                for (key in options) {
+                    src = result[key];
+                    copy = options[key];
+                    if (src === copy) {
+                        continue;
+                    }
+                    if (copy && (isObject(copy) || (copyIsArray = isArray(copy)))) {
+                        if (copyIsArray) {
+                            copyIsArray = false;
+                            clone = src && isArray(src) ? src : [];
+                        } else {
+                            clone = src && isObject(src) ? src : {};
+                        }
+                        result[key] = extend(clone, copy);
+                    } else if (copy !== undefined) {
+                        result[key] = copy;
+                    }
+                }
             }
         }
-        return target;
+        return result;
     };
     module.__5=extend;
 })(_qc);(function (module) {
@@ -268,10 +293,20 @@
         }
     };
 })(_qc);(function (module) {
+    var extend = function(target, source) {
+        for (var p in source) {
+            if (source.hasOwnProperty(p)) {
+                target[p] = source[p];
+            }
+        }
+        return target;
+    };
+    module.__10=extend;
+})(_qc);(function (module) {
     var Class = module.__1;
     var EventPlugin = module.__4;
     var checkData = module.__8;
-    var extend = module.__5;
+    var extend = module.__10;
     var tool = module.__9;
     var Step = Class({
         plugins: [ new EventPlugin ],
@@ -374,7 +409,7 @@
 })(_qc);(function (module) {
     var Class = module.__1;
     var Step = module.__7;
-    var extend = module.__5;
+    var extend = module.__10;
     var Condition = Class({
         extend: Step,
         construct: function(options) {
@@ -406,11 +441,11 @@
             }
         }
     });
-    module.__11=Condition;
+    module.__12=Condition;
 })(_qc);(function (module) {
     var Class = module.__1;
-    var Condition = module.__11;
-    var extend = module.__5;
+    var Condition = module.__12;
+    var extend = module.__10;
     var Input = Class({
         extend: Condition,
         construct: function(options) {
@@ -434,10 +469,10 @@
             }
         }
     });
-    module.__10=Input;
+    module.__11=Input;
 })(_qc);(function (module) {
     var Class = module.__1;
-    module.__12=Class({
+    module.__13=Class({
         construct: function() {
             this._queue = [];
             this._event = {};
@@ -509,17 +544,17 @@
             }
         }
     });
-    module.__13=FlowData;
+    module.__14=FlowData;
 })(_qc);(function (module) {
     var Class = module.__1;
     var EventPlugin = module.__4;
     var extend = module.__5;
     var Begin = module.__6;
     var Step = module.__7;
-    var Input = module.__10;
-    var Condition = module.__11;
-    var Queue = module.__12;
-    var Data = module.__13;
+    var Input = module.__11;
+    var Condition = module.__12;
+    var Queue = module.__13;
+    var Data = module.__14;
     var tool = module.__9;
     var reserve = [];
     var Flow = Class({
@@ -723,7 +758,7 @@
                         }
                     }
                 }
-                return this.__data.getData(dataNames);
+                return extend({}, this.__data.getData(dataNames));
             },
             __enter: function(step, data, callback) {
                 var _this = this;
@@ -746,11 +781,11 @@
     module.__3=Flow;
 })(_qc);(function (module) {
     window.Flowjs = {
-        V: "0.2.5",
+        V: "0.2.6",
         Class: module.__1,
         Flow: module.__3,
         Step: module.__7,
-        Condition: module.__11,
-        Input: module.__10
+        Condition: module.__12,
+        Input: module.__11
     };
 })(_qc);})(this);

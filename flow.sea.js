@@ -1,6 +1,6 @@
 define("./index", [ "./util/class", "./flow", "./step", "./condition", "./input" ], function(require, exports, module) {
     window.Flowjs = {
-        V: "0.2.7",
+        V: "0.3.0",
         Class: require("./util/class"),
         Flow: require("./flow"),
         Step: require("./step"),
@@ -156,6 +156,7 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/deepExtend", ".
                     if (options) {
                         if (step instanceof Condition) {
                             step.cases(options);
+                            step.end();
                         }
                         if (step instanceof Input) {
                             step.inputs(options);
@@ -791,10 +792,10 @@ define("./util/flowData", [ "./class", "./tool" ], function(require, exports, mo
                             result[name] = this._data[name];
                         }
                     }
+                    return result;
                 } else {
-                    result[dataNames.toString()] = this._data[dataNames.toString()];
+                    return this._data[dataNames.toString()];
                 }
-                return result;
             },
             setData: function(dataName, data) {
                 this._data[dataName] = data;

@@ -533,10 +533,10 @@
                             result[name] = this._data[name];
                         }
                     }
+                    return result;
                 } else {
-                    result[dataNames.toString()] = this._data[dataNames.toString()];
+                    return this._data[dataNames.toString()];
                 }
-                return result;
             },
             setData: function(dataName, data) {
                 this._data[dataName] = data;
@@ -619,6 +619,7 @@
                     if (options) {
                         if (step instanceof Condition) {
                             step.cases(options);
+                            step.end();
                         }
                         if (step instanceof Input) {
                             step.inputs(options);
@@ -782,7 +783,7 @@
     module.__3=Flow;
 })(_qc);(function (module) {
     window.Flowjs = {
-        V: "0.2.7",
+        V: "0.3.0",
         Class: module.__1,
         Flow: module.__3,
         Step: module.__7,

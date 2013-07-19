@@ -68,6 +68,8 @@ define(function(require,exports,module){
                     if(options){
                         if(step instanceof Condition){
                             step.cases(options);
+                            //条件步骤一定是一段流程的终点
+                            step.end();
                         }
                         if(step instanceof Input){
                             step.inputs(options);

@@ -40,17 +40,17 @@ define(function (require, exports, module) {
                             result[name] = this._data[name];
                         }
                     }
+                    return result;
                 } else {
-                    result[dataNames.toString()] = this._data[dataNames.toString()];
+                    return this._data[dataNames.toString()];
                 }
-                return result;
             },
             setData: function (dataName,data) {
                 this._data[dataName] = data;
                 return false;
             }
         }
-    })
+    });
 
     module.exports = FlowData;
 });

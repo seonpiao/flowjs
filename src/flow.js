@@ -66,7 +66,7 @@ define(function(require,exports,module){
                 //已实现的步骤
                 if(step){
                     if(options){
-                        if(step instanceof Condition){
+                        if(step instanceof Condition && !(step instanceof Input)){
                             step.cases(options);
                             //条件步骤一定是一段流程的终点
                             step.end();

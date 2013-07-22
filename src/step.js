@@ -13,7 +13,7 @@ define(function(require,exports,module){
             //     throw new Error('Need a description.');
             // }
             this._data = {
-                __id:Date.now(),
+                __id:(new Date()).getTime(),
                 description:options.description
             };
             this.__struct = this._describeData();

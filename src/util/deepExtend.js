@@ -5,13 +5,16 @@ define(function(require, exports, module) {
     var isObject = function(arg){
         return Object.prototype.toString.call(arg) == '[object Object]';
     };
+    var isPlainObject = require('./isPlainObject');
     var extend = function(dest, object) {
         var second, options, key, src, copy,
             i = 1,
             n = arguments.length,
             result = dest,
             copyIsArray, clone;
-
+        if(!isPlainObject(object)){
+            return object;
+        }
         for (; i < n; i++) {
             options = arguments[i];
             if (isObject(options) || isArray(options)) {

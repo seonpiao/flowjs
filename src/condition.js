@@ -14,7 +14,9 @@ define(function(require,exports,module){
         methods:{
             _select:function(condition,data){
                 var fn = this._cases[condition] || this._default;
-                fn(data);
+                setTimeout(function(){
+                    fn(data);
+                },0);
             },
             cases:function(data){
                 if(data){
@@ -29,11 +31,11 @@ define(function(require,exports,module){
                     return {
                         defaultCase:this._default,
                         cases:this._cases
-                    }
+                    };
                 }
             }
         }
     });
-    
+
     module.exports = Condition;
 });

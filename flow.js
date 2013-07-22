@@ -19,9 +19,9 @@
         this._realsuper = null;
     };
     _Object.prototype = proto;
-    module.__109=_Object;
+    module.__2=_Object;
 })(_qc);(function (module) {
-    var _Object = module.__109;
+    var _Object = module.__2;
     var Class = function(data) {
         var superclass = data.extend || _Object;
         var superproto = function() {};
@@ -69,9 +69,9 @@
     Class.abstractMethod = function() {
         throw new Error("Not implement.");
     };
-    module.__108=Class;
+    module.__1=Class;
 })(_qc);(function (module) {
-    var Class = module.__108;
+    var Class = module.__1;
     var EventPlugin = Class({
         methods: {
             on: function(type, listener) {
@@ -137,7 +137,7 @@
             }
         }
     });
-    module.__107=EventPlugin;
+    module.__4=EventPlugin;
 })(_qc);(function (module) {
     var isPlainObject = function(unknow) {
         var key, hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -150,7 +150,7 @@
         for (key in unknow) {}
         return key === undefined || hasOwnProperty.call(unknow, key);
     };
-    module.__10=isPlainObject;
+    module.__6=isPlainObject;
 })(_qc);(function (module) {
     var isArray = Array.isArray || function(arg) {
         return Object.prototype.toString.call(arg) == "[object Array]";
@@ -158,7 +158,7 @@
     var isObject = function(arg) {
         return Object.prototype.toString.call(arg) == "[object Object]";
     };
-    var isPlainObject = module.__10;
+    var isPlainObject = module.__6;
     var extend = function(dest, object) {
         var second, options, key, src, copy, i = 1, n = arguments.length, result = dest, copyIsArray, clone;
         if (!isPlainObject(object)) {
@@ -189,9 +189,9 @@
         }
         return result;
     };
-    module.__9=extend;
+    module.__5=extend;
 })(_qc);(function (module) {
-    module.__113={
+    module.__10={
         isArray: Array.isArray || function(arg) {
             return Object.prototype.toString.call(arg) == "[object Array]";
         },
@@ -219,8 +219,8 @@
         }
     };
 })(_qc);(function (module) {
-    var tool = module.__113;
-    module.__110={
+    var tool = module.__10;
+    module.__9={
         check: function(struct, data) {
             var self = this;
             if (!struct) {
@@ -318,20 +318,20 @@
         }
         return target;
     };
-    module.__115=extend;
+    module.__11=extend;
 })(_qc);(function (module) {
-    var Class = module.__108;
-    var EventPlugin = module.__107;
-    var checkData = module.__110;
-    var extend = module.__115;
-    var tool = module.__113;
+    var Class = module.__1;
+    var EventPlugin = module.__4;
+    var checkData = module.__9;
+    var extend = module.__11;
+    var tool = module.__10;
     var Step = Class({
         plugins: [ new EventPlugin ],
         isAbstract: true,
         construct: function(options) {
             options = options || {};
             this._data = {
-                __id: Date.now(),
+                __id: (new Date).getTime(),
                 description: options.description
             };
             this.__struct = this._describeData();
@@ -411,10 +411,10 @@
             }
         }
     });
-    module.__104=Step;
+    module.__8=Step;
 })(_qc);(function (module) {
-    var Class = module.__108;
-    var Step = module.__104;
+    var Class = module.__1;
+    var Step = module.__8;
     var Begin = Class({
         extend: Step,
         construct: function(options) {
@@ -422,11 +422,11 @@
         },
         isAbstract: true
     });
-    module.__11=Begin;
+    module.__7=Begin;
 })(_qc);(function (module) {
-    var Class = module.__108;
-    var Step = module.__104;
-    var extend = module.__115;
+    var Class = module.__1;
+    var Step = module.__8;
+    var extend = module.__11;
     var Condition = Class({
         extend: Step,
         construct: function(options) {
@@ -460,11 +460,11 @@
             }
         }
     });
-    module.__101=Condition;
+    module.__13=Condition;
 })(_qc);(function (module) {
-    var Class = module.__108;
-    var Condition = module.__101;
-    var extend = module.__115;
+    var Class = module.__1;
+    var Condition = module.__13;
+    var extend = module.__11;
     var Input = Class({
         extend: Condition,
         construct: function(options) {
@@ -488,10 +488,10 @@
             }
         }
     });
-    module.__98=Input;
+    module.__12=Input;
 })(_qc);(function (module) {
-    var Class = module.__108;
-    module.__66=Class({
+    var Class = module.__1;
+    module.__14=Class({
         construct: function() {
             this._queue = [];
             this._event = {};
@@ -534,8 +534,8 @@
         }
     });
 })(_qc);(function (module) {
-    var Class = module.__108;
-    var tool = module.__113;
+    var Class = module.__1;
+    var tool = module.__10;
     var FlowData = Class({
         construct: function(options) {
             this._data = {};
@@ -563,18 +563,18 @@
             }
         }
     });
-    module.__69=FlowData;
+    module.__15=FlowData;
 })(_qc);(function (module) {
-    var Class = module.__108;
-    var EventPlugin = module.__107;
-    var extend = module.__9;
-    var Begin = module.__11;
-    var Step = module.__104;
-    var Input = module.__98;
-    var Condition = module.__101;
-    var Queue = module.__66;
-    var Data = module.__69;
-    var tool = module.__113;
+    var Class = module.__1;
+    var EventPlugin = module.__4;
+    var extend = module.__5;
+    var Begin = module.__7;
+    var Step = module.__8;
+    var Input = module.__12;
+    var Condition = module.__13;
+    var Queue = module.__14;
+    var Data = module.__15;
+    var tool = module.__10;
     var reserve = [];
     var Flow = Class({
         plugins: [ new EventPlugin ],
@@ -802,11 +802,11 @@
     module.__3=Flow;
 })(_qc);(function (module) {
     window.Flowjs = {
-        V: "0.3.1",
-        Class: module.__108,
+        V: "0.3.2",
+        Class: module.__1,
         Flow: module.__3,
-        Step: module.__104,
-        Condition: module.__101,
-        Input: module.__98
+        Step: module.__8,
+        Condition: module.__13,
+        Input: module.__12
     };
 })(_qc);})(this);

@@ -154,7 +154,7 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/deepExtend", ".
                 }
                 if (step) {
                     if (options) {
-                        if (step instanceof Condition) {
+                        if (step instanceof Condition && !(step instanceof Input)) {
                             step.cases(options);
                             step.end();
                         }

@@ -183,19 +183,21 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/deepExtend", ".
                             throw e;
                         }
                         this.__timer = setTimeout(function() {
-                            _this.__newflow();
+                            step.end();
                             _this.__queue.clear();
                         }, 0);
                     } else {
                         this.__timer = setTimeout(function() {
-                            _this.__newflow();
+                            step.end();
                             _this.__start();
                             _this.__queue.clear();
                         }, 0);
                     }
                 } else {
                     this.__timer = setTimeout(function() {
-                        _this.__newflow();
+                        if (_this.__prev) {
+                            _this.__prev.end();
+                        }
                         _this.__start();
                         _this.__queue.clear();
                     }, 0);

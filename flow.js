@@ -437,6 +437,9 @@
         methods: {
             _select: function(condition, data) {
                 var fn = this._cases[condition] || this._default;
+                if (this._newflow) {
+                    this._newflow();
+                }
                 setTimeout(function() {
                     fn(data);
                 }, 0);
@@ -448,6 +451,9 @@
                     }
                     if (data.defaultCase) {
                         this._default = data.defaultCase;
+                    }
+                    if (data.newflow) {
+                        this._newflow = data.newflow;
                     }
                 } else {
                     return {
@@ -482,6 +488,9 @@
             inputs: function(data) {
                 var tmp = {};
                 tmp.cases = data.inputs;
+                if (data.newflow) {
+                    this._newflow = data.newflow;
+                }
                 return this.cases(tmp);
             }
         }
@@ -646,10 +655,12 @@
                 if (step) {
                     if (options) {
                         if (step instanceof Condition && !(step instanceof Input)) {
+                            options.newflow = this.__newflow.bind(this);
                             step.cases(options);
                             step.end();
                         }
                         if (step instanceof Input) {
+                            options.newflow = this.__newflow.bind(this);
                             step.inputs(options);
                         }
                     }
@@ -684,28 +695,12 @@
                     }
                 } else {
                     this.__timer = setTimeout(function() {
-                        _this.__prev.end();
+                        if (_this.__prev) {
+                            _this.__prev.end();
+                        }
                         _this.__start();
                         _this.__queue.clear();
                     }, 0);
-                }
-            },
-            _pause: function() {
-                for (var key in this.__working) {
-                    if (this.__working.hasOwnProperty(key)) {
-                        this.__working[key].pause();
-                        this.__pausing[key] = this.__working[key];
-                        delete this.__working[key];
-                    }
-                }
-            },
-            _resume: function() {
-                for (var key in this.__pausing) {
-                    if (this.__pausing.hasOwnProperty(key)) {
-                        this.__pausing[key].resume();
-                        this.__working[key] = this.__pausing[key];
-                        delete this.__pausing[key];
-                    }
                 }
             },
             _sync: function(callback) {
@@ -725,6 +720,9 @@
             },
             _getData: function(keys) {
                 return this.__data.getData(keys);
+            },
+            __newflow: function() {
+                this.__prev = null;
             },
             __start: function() {
                 var item = this.__queue.dequeue();
@@ -814,7 +812,7 @@
     module.__3=Flow;
 })(_qc);(function (module) {
     window.Flowjs = {
-        V: "0.3.4",
+        V: "0.4.0",
         Class: module.__1,
         Flow: module.__3,
         Step: module.__8,

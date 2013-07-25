@@ -1,6 +1,6 @@
 define("./index", [ "./util/class", "./flow", "./step", "./condition", "./input" ], function(require, exports, module) {
     window.Flowjs = {
-        V: "0.3.4",
+        V: "0.4.0",
         Class: require("./util/class"),
         Flow: require("./flow"),
         Step: require("./step"),
@@ -155,10 +155,12 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/deepExtend", ".
                 if (step) {
                     if (options) {
                         if (step instanceof Condition && !(step instanceof Input)) {
+                            options.newflow = this.__newflow.bind(this);
                             step.cases(options);
                             step.end();
                         }
                         if (step instanceof Input) {
+                            options.newflow = this.__newflow.bind(this);
                             step.inputs(options);
                         }
                     }
@@ -193,28 +195,12 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/deepExtend", ".
                     }
                 } else {
                     this.__timer = setTimeout(function() {
-                        _this.__prev.end();
+                        if (_this.__prev) {
+                            _this.__prev.end();
+                        }
                         _this.__start();
                         _this.__queue.clear();
                     }, 0);
-                }
-            },
-            _pause: function() {
-                for (var key in this.__working) {
-                    if (this.__working.hasOwnProperty(key)) {
-                        this.__working[key].pause();
-                        this.__pausing[key] = this.__working[key];
-                        delete this.__working[key];
-                    }
-                }
-            },
-            _resume: function() {
-                for (var key in this.__pausing) {
-                    if (this.__pausing.hasOwnProperty(key)) {
-                        this.__pausing[key].resume();
-                        this.__working[key] = this.__pausing[key];
-                        delete this.__pausing[key];
-                    }
                 }
             },
             _sync: function(callback) {
@@ -234,6 +220,9 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/deepExtend", ".
             },
             _getData: function(keys) {
                 return this.__data.getData(keys);
+            },
+            __newflow: function() {
+                this.__prev = null;
             },
             __start: function() {
                 var item = this.__queue.dequeue();
@@ -704,6 +693,9 @@ define("./input", [ "./util/class", "./condition", "./util/extend" ], function(r
             inputs: function(data) {
                 var tmp = {};
                 tmp.cases = data.inputs;
+                if (data.newflow) {
+                    this._newflow = data.newflow;
+                }
                 return this.cases(tmp);
             }
         }
@@ -726,6 +718,9 @@ define("./condition", [ "./util/class", "./step", "./util/extend" ], function(re
         methods: {
             _select: function(condition, data) {
                 var fn = this._cases[condition] || this._default;
+                if (this._newflow) {
+                    this._newflow();
+                }
                 setTimeout(function() {
                     fn(data);
                 }, 0);
@@ -737,6 +732,9 @@ define("./condition", [ "./util/class", "./step", "./util/extend" ], function(re
                     }
                     if (data.defaultCase) {
                         this._default = data.defaultCase;
+                    }
+                    if (data.newflow) {
+                        this._newflow = data.newflow;
                     }
                 } else {
                     return {

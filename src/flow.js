@@ -96,14 +96,14 @@ define(function(require,exports,module){
                         }
                         this.__timer = setTimeout(function(){
                             //执行到此，说明一个流程链已经完成，当前步骤为该流程链的末端，不允许再有下一步了
-                            step.end();
+                            _this.__newflow();
                             _this.__queue.clear();
                         },0);
                     }
                     else{
                         this.__timer = setTimeout(function(){
                             //执行到此，说明一个流程链已经完成，当前步骤为该流程链的末端，不允许再有下一步了
-                            step.end();
+                            _this.__newflow();
                             _this.__start();
                             _this.__queue.clear();
                         },0);
@@ -112,9 +112,7 @@ define(function(require,exports,module){
                 //未实现的步骤直接跳过
                 else{
                     this.__timer = setTimeout(function(){
-                        if(_this.__prev){
-                            _this.__prev.end();
-                        }
+                        _this.__newflow();
                         _this.__start();
                         _this.__queue.clear();
                     },0);

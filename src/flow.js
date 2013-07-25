@@ -67,11 +67,13 @@ define(function(require,exports,module){
                 if(step){
                     if(options){
                         if(step instanceof Condition && !(step instanceof Input)){
+                            options.newflow = this.__newflow.bind(this);
                             step.cases(options);
                             //条件步骤一定是一段流程的终点
                             step.end();
                         }
                         if(step instanceof Input){
+                            options.newflow = this.__newflow.bind(this);
                             step.inputs(options);
                         }
                     }
@@ -110,35 +112,13 @@ define(function(require,exports,module){
                 //未实现的步骤直接跳过
                 else{
                     this.__timer = setTimeout(function(){
-                        _this.__prev.end();
+                        if(_this.__prev){
+                            _this.__prev.end();
+                        }
                         _this.__start();
                         _this.__queue.clear();
                     },0);
                 }
-            },
-            _pause:function(){
-                for(var key in this.__working){
-                    if(this.__working.hasOwnProperty(key)){
-                        this.__working[key].pause();
-                        this.__pausing[key] = this.__working[key];
-                        delete this.__working[key];
-                    }
-                }
-                //查看是否有泄露
-                // console.log(Object.keys(this.__working));
-                // console.log(Object.keys(this.__pausing));
-            },
-            _resume:function(){
-                for(var key in this.__pausing){
-                    if(this.__pausing.hasOwnProperty(key)){
-                        this.__pausing[key].resume();
-                        this.__working[key] = this.__pausing[key];
-                        delete this.__pausing[key];
-                    }
-                }
-                //查看是否有泄露
-                // console.log(Object.keys(this.__working));
-                // console.log(Object.keys(this.__pausing));
             },
             _sync:function(callback){
                 this.__sync = true;
@@ -157,6 +137,13 @@ define(function(require,exports,module){
             },
             _getData:function(keys){
                 return this.__data.getData(keys);
+            },
+            /**
+             * 启动一个新的流程，避免与之前的流程发生衔接
+             * @return {[type]} [description]
+             */
+            __newflow:function(){
+                this.__prev = null;
             },
             __start:function(){
                 var item = this.__queue.dequeue();

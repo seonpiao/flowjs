@@ -22,6 +22,9 @@ define(function(require,exports,module){
             inputs:function(data){
                 var tmp = {};
                 tmp.cases = data.inputs;
+                if(data.newflow){
+                    this._newflow = data.newflow;
+                }
                 return this.cases(tmp);
             }
         }

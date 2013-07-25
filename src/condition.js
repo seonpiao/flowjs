@@ -14,6 +14,9 @@ define(function(require,exports,module){
         methods:{
             _select:function(condition,data){
                 var fn = this._cases[condition] || this._default;
+                if(this._newflow){
+                    this._newflow();
+                }
                 setTimeout(function(){
                     fn(data);
                 },0);
@@ -25,6 +28,9 @@ define(function(require,exports,module){
                     }
                     if(data.defaultCase){
                         this._default = data.defaultCase;
+                    }
+                    if(data.newflow){
+                        this._newflow = data.newflow;
                     }
                 }
                 else{

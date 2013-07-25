@@ -14,10 +14,11 @@ define(function(require,exports,module){
         methods:{
             _select:function(condition,data){
                 var fn = this._cases[condition] || this._default;
-                if(this._newflow){
-                    this._newflow();
-                }
+                var _this = this;
                 setTimeout(function(){
+                    if(_this._newflow){
+                        _this._newflow();
+                    }
                     fn(data);
                 },0);
             },

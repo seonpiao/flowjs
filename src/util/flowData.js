@@ -9,6 +9,14 @@ define(function (require, exports, module) {
 
     var Class = require("./class");
     var tool = require("./tool");
+    var deepExtend = require('./deepExtend');
+
+    var isArray = Array.isArray || function(arg){
+        return Object.prototype.toString.call(arg) == '[object Array]';
+    };
+    var isObject = function(arg){
+        return Object.prototype.toString.call(arg) == '[object Object]';
+    };
 
     var FlowData = Class({
         construct: function (options) {
@@ -46,7 +54,12 @@ define(function (require, exports, module) {
                 }
             },
             setData: function (dataName,data) {
-                this._data[dataName] = data;
+                if(isObject(data) || isArray(data)){
+                    this._data[dataName] = deepExtend(this._data[dataName] || {},data);
+                }
+                else{
+                    this._data[dataName] = data;
+                }
                 return false;
             }
         }

@@ -164,26 +164,24 @@
         if (!isPlainObject(object)) {
             return object;
         }
-        for (; i < n; i++) {
-            options = arguments[i];
-            if (isObject(options) || isArray(options)) {
-                for (key in options) {
-                    src = result[key];
-                    copy = options[key];
-                    if (src === copy) {
-                        continue;
+        options = object;
+        if (isObject(options) || isArray(options)) {
+            for (key in options) {
+                src = result[key];
+                copy = options[key];
+                if (src === copy) {
+                    continue;
+                }
+                if (copy && (isObject(copy) || (copyIsArray = isArray(copy)))) {
+                    if (copyIsArray) {
+                        copyIsArray = false;
+                        clone = src && isArray(src) ? src : [];
+                    } else {
+                        clone = src && isObject(src) ? src : {};
                     }
-                    if (copy && (isObject(copy) || (copyIsArray = isArray(copy)))) {
-                        if (copyIsArray) {
-                            copyIsArray = false;
-                            clone = src && isArray(src) ? src : [];
-                        } else {
-                            clone = src && isObject(src) ? src : {};
-                        }
-                        result[key] = extend(clone, copy);
-                    } else if (copy !== undefined) {
-                        result[key] = copy;
-                    }
+                    result[key] = extend(clone, copy);
+                } else if (copy !== undefined) {
+                    result[key] = copy;
                 }
             }
         }
@@ -270,7 +268,7 @@
             if (tool.isArray(data)) {
                 for (var i = 0; i < data.length; i++) {
                     var item = data[i];
-                    if (!self.checkData(rule.item, item)) {
+                    if (rule.item && !self.checkData(rule.item, item)) {
                         return false;
                     }
                 }
@@ -536,6 +534,13 @@
 })(_qc);(function (module) {
     var Class = module.__1;
     var tool = module.__10;
+    var deepExtend = module.__5;
+    var isArray = Array.isArray || function(arg) {
+        return Object.prototype.toString.call(arg) == "[object Array]";
+    };
+    var isObject = function(arg) {
+        return Object.prototype.toString.call(arg) == "[object Object]";
+    };
     var FlowData = Class({
         construct: function(options) {
             this._data = {};
@@ -558,7 +563,11 @@
                 }
             },
             setData: function(dataName, data) {
-                this._data[dataName] = data;
+                if (isObject(data) || isArray(data)) {
+                    this._data[dataName] = deepExtend(this._data[dataName] || {}, data);
+                } else {
+                    this._data[dataName] = data;
+                }
                 return false;
             }
         }
@@ -726,8 +735,10 @@
                 }
             },
             __process: function(step, data) {
+                tool.log("步骤开始：" + step.data().description);
                 this.__working[step.data().__id] = step;
                 this.__enter(step, data, function(result) {
+                    tool.log("步骤结束：" + step.data().description);
                     delete this.__working[step.data().__id];
                     if (result) {
                         this.__saveData(result);
@@ -735,6 +746,7 @@
                     if (!this.__sync) {
                         var next = this.__getNext(step);
                         if (next) {
+                            tool.log("即将开始下一步：" + next.step.data().description);
                             this.__stepCount++;
                             if (this.__stepCount < 20) {
                                 this.__process(next.step, next.data);
@@ -802,7 +814,7 @@
     module.__3=Flow;
 })(_qc);(function (module) {
     window.Flowjs = {
-        V: "0.3.3",
+        V: "0.3.4",
         Class: module.__1,
         Flow: module.__3,
         Step: module.__8,

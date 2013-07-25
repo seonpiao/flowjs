@@ -56,7 +56,7 @@ define(function (require, exports, module) {
             if (tool.isArray(data)) {
                 for (var i = 0; i < data.length; i++){
                     var item = data[i];
-                    if (!self.checkData(rule.item, item)) {
+                    if (rule.item && !self.checkData(rule.item, item)) {
                         return false;
                     }
                 }

@@ -15,27 +15,25 @@ define(function(require, exports, module) {
         if(!isPlainObject(object)){
             return object;
         }
-        for (; i < n; i++) {
-            options = arguments[i];
-            if (isObject(options) || isArray(options)) {
-                for (key in options) {
-                    src = result[key];
-                    copy = options[key];
-                    // Prevent never-ending loop
-                    if (src === copy) {
-                        continue;
+        options = object;
+        if (isObject(options) || isArray(options)) {
+            for (key in options) {
+                src = result[key];
+                copy = options[key];
+                // Prevent never-ending loop
+                if (src === copy) {
+                    continue;
+                }
+                if (copy && (isObject(copy) || (copyIsArray = isArray(copy)))) {
+                    if (copyIsArray) {
+                        copyIsArray = false;
+                        clone = src && isArray(src) ? src : [];
+                    } else {
+                        clone = src && isObject(src) ? src : {};
                     }
-                    if (copy && (isObject(copy) || (copyIsArray = isArray(copy)))) {
-                        if (copyIsArray) {
-                            copyIsArray = false;
-                            clone = src && isArray(src) ? src : [];
-                        } else {
-                            clone = src && isObject(src) ? src : {};
-                        }
-                        result[key] = extend(clone, copy);
-                    } else if (copy !== undefined) {
-                        result[key] = copy;
-                    }
+                    result[key] = extend(clone, copy);
+                } else if (copy !== undefined) {
+                    result[key] = copy;
                 }
             }
         }

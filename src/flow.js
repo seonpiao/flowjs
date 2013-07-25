@@ -167,8 +167,10 @@ define(function(require,exports,module){
                 }
             },
             __process:function(step,data){
+                tool.log('步骤开始：' + step.data().description);
                 this.__working[step.data().__id] = step;
                 this.__enter(step,data,function(result){
+                    tool.log('步骤结束：' + step.data().description);
                     delete this.__working[step.data().__id];
                     if(result){
                         this.__saveData(result);
@@ -177,6 +179,7 @@ define(function(require,exports,module){
                     if(!this.__sync){
                         var next = this.__getNext(step);
                         if(next){
+                            tool.log('即将开始下一步：' + next.step.data().description);
                             this.__stepCount++;
                             if(this.__stepCount < 20){
                                 this.__process(next.step,next.data);

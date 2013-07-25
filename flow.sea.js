@@ -183,21 +183,19 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/deepExtend", ".
                             throw e;
                         }
                         this.__timer = setTimeout(function() {
-                            step.end();
+                            _this.__newflow();
                             _this.__queue.clear();
                         }, 0);
                     } else {
                         this.__timer = setTimeout(function() {
-                            step.end();
+                            _this.__newflow();
                             _this.__start();
                             _this.__queue.clear();
                         }, 0);
                     }
                 } else {
                     this.__timer = setTimeout(function() {
-                        if (_this.__prev) {
-                            _this.__prev.end();
-                        }
+                        _this.__newflow();
                         _this.__start();
                         _this.__queue.clear();
                     }, 0);
@@ -718,10 +716,11 @@ define("./condition", [ "./util/class", "./step", "./util/extend" ], function(re
         methods: {
             _select: function(condition, data) {
                 var fn = this._cases[condition] || this._default;
-                if (this._newflow) {
-                    this._newflow();
-                }
+                var _this = this;
                 setTimeout(function() {
+                    if (_this._newflow) {
+                        _this._newflow();
+                    }
                     fn(data);
                 }, 0);
             },

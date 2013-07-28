@@ -19,7 +19,7 @@ define(function(require,exports,module){
             this.__stepInstances = {}; //step instance
             this.__queue = new Queue();
             this.__timer = null;
-            this.__prev = this.__begin;
+            // this.__prev = this.__begin;//上一个步骤
             this.__data = new Data();
             this.__interfaces = {};
             this.__pausing = {};
@@ -56,7 +56,8 @@ define(function(require,exports,module){
             },
             _go:function(step,data,options){
                 var _this = this;
-                if(this.__timer){
+                //
+                if(this.__timer && this.__prev){
                     clearTimeout(this.__timer);
                 }
                 if(typeof step == 'string'){
@@ -78,26 +79,27 @@ define(function(require,exports,module){
                         }
                     }
                     step.__paramData = data;
-                    this.__queue.enqueue({step:step});
+                    if(!this.__prev){
+                        this.__queue.enqueue({step:step});
+                    }
                     if(this.__prev){
                         this.__prev.next(step);
                     }
                     this.__prev = step;
                     if(this.__sync){
-                        var item = this.__queue.dequeue();
-                        var stepData = this.__getStepData(item.step);
-                        extend(stepData,item.step.__paramData);
+                        var stepData = this.__getStepData(step);
+                        extend(stepData,step.__paramData);
                         try{
-                            this.__process(item.step,stepData);
+                            this.__process(step,stepData);
                         }
                         catch(e){
-                            _this.__queue.clear();
+                            // _this.__queue.clear();
                             throw e;
                         }
                         this.__timer = setTimeout(function(){
                             //执行到此，说明一个流程链已经完成，当前步骤为该流程链的末端，不允许再有下一步了
                             step.end();
-                            _this.__queue.clear();
+                            // _this.__queue.clear();
                         },0);
                     }
                     else{
@@ -105,7 +107,7 @@ define(function(require,exports,module){
                             //执行到此，说明一个流程链已经完成，当前步骤为该流程链的末端，不允许再有下一步了
                             step.end();
                             _this.__start();
-                            _this.__queue.clear();
+                            // _this.__queue.clear();
                         },0);
                     }
                 }
@@ -116,7 +118,7 @@ define(function(require,exports,module){
                             _this.__prev.end();
                         }
                         _this.__start();
-                        _this.__queue.clear();
+                        // _this.__queue.clear();
                     },0);
                 }
             },
@@ -132,7 +134,10 @@ define(function(require,exports,module){
                 if(reserve.indexOf(name) != -1){
                     throw new Error('Reserve property : ' + name);
                 }
-                this[name] = fn;
+                this[name] = function(){
+                    this.__newflow();
+                    fn.apply(this,arguments);
+                };
                 this.__interfaces[name] = fn;
             },
             _getData:function(keys){

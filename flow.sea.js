@@ -1,6 +1,6 @@
 define("./index", [ "./util/class", "./flow", "./step", "./condition", "./input" ], function(require, exports, module) {
     window.Flowjs = {
-        V: "0.4.0",
+        V: "0.4.1",
         Class: require("./util/class"),
         Flow: require("./flow"),
         Step: require("./step"),
@@ -106,7 +106,6 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/deepExtend", ".
             this.__stepInstances = {};
             this.__queue = new Queue;
             this.__timer = null;
-            this.__prev = this.__begin;
             this.__data = new Data;
             this.__interfaces = {};
             this.__pausing = {};
@@ -145,7 +144,7 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/deepExtend", ".
             },
             _go: function(step, data, options) {
                 var _this = this;
-                if (this.__timer) {
+                if (this.__timer && this.__prev) {
                     clearTimeout(this.__timer);
                 }
                 if (typeof step == "string") {
@@ -165,32 +164,30 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/deepExtend", ".
                         }
                     }
                     step.__paramData = data;
-                    this.__queue.enqueue({
-                        step: step
-                    });
+                    if (!this.__prev) {
+                        this.__queue.enqueue({
+                            step: step
+                        });
+                    }
                     if (this.__prev) {
                         this.__prev.next(step);
                     }
                     this.__prev = step;
                     if (this.__sync) {
-                        var item = this.__queue.dequeue();
-                        var stepData = this.__getStepData(item.step);
-                        extend(stepData, item.step.__paramData);
+                        var stepData = this.__getStepData(step);
+                        extend(stepData, step.__paramData);
                         try {
-                            this.__process(item.step, stepData);
+                            this.__process(step, stepData);
                         } catch (e) {
-                            _this.__queue.clear();
                             throw e;
                         }
                         this.__timer = setTimeout(function() {
                             step.end();
-                            _this.__queue.clear();
                         }, 0);
                     } else {
                         this.__timer = setTimeout(function() {
                             step.end();
                             _this.__start();
-                            _this.__queue.clear();
                         }, 0);
                     }
                 } else {
@@ -199,7 +196,6 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/deepExtend", ".
                             _this.__prev.end();
                         }
                         _this.__start();
-                        _this.__queue.clear();
                     }, 0);
                 }
             },
@@ -215,7 +211,10 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/deepExtend", ".
                 if (reserve.indexOf(name) != -1) {
                     throw new Error("Reserve property : " + name);
                 }
-                this[name] = fn;
+                this[name] = function() {
+                    this.__newflow();
+                    fn.apply(this, arguments);
+                };
                 this.__interfaces[name] = fn;
             },
             _getData: function(keys) {

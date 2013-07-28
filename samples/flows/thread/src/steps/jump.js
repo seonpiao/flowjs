@@ -6,7 +6,7 @@ define(function(require,exports,module){
                     this._count = 0;
                 }
                 this._count++;
-                if(this._count > 20){
+                if(this._count > 2000){
                     this._select('yes');
                 }
                 else{

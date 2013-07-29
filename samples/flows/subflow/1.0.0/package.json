@@ -1,0 +1,11 @@
+{
+  "name": "thread",
+  "version": "1.0.0",
+  "description": "must",
+  "author": {
+    "name": "piaoshihuang"
+  },
+  "dependencies": {
+  },
+  "main": "index.js"
+}

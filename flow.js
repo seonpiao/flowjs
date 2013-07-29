@@ -714,7 +714,7 @@
                 }
                 this[name] = function() {
                     this.__newflow();
-                    fn.apply(this, arguments);
+                    return fn.apply(this, arguments);
                 };
                 this.__interfaces[name] = fn;
             },

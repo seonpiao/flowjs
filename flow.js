@@ -612,6 +612,7 @@
             this.__pausing = {};
             this.__working = {};
             this.__stepCount = 0;
+            this.__subs = {};
             for (var key in this) {
                 reserve.push(key);
             }
@@ -649,6 +650,10 @@
                     clearTimeout(this.__timer);
                 }
                 if (typeof step == "string") {
+                    if (this.__subs[step]) {
+                        this.__subs[step].apply(this, arguments);
+                        return;
+                    }
                     var stepName = step;
                     step = this.__stepInstances[step];
                 }
@@ -704,6 +709,9 @@
                 this.__sync = true;
                 callback();
                 this.__sync = false;
+            },
+            _sub: function(subName, fn) {
+                this.__subs[subName] = fn;
             },
             _addStep: function(name, StepClass) {
                 this.__steps[name] = StepClass;
@@ -812,7 +820,7 @@
     module.__3=Flow;
 })(_qc);(function (module) {
     window.Flowjs = {
-        V: "0.4.1",
+        V: "0.4.2",
         Class: module.__1,
         Flow: module.__3,
         Step: module.__8,

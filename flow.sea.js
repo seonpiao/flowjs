@@ -1,6 +1,6 @@
 define("./index", [ "./util/class", "./flow", "./step", "./condition", "./input" ], function(require, exports, module) {
     window.Flowjs = {
-        V: "0.4.1",
+        V: "0.4.2",
         Class: require("./util/class"),
         Flow: require("./flow"),
         Step: require("./step"),
@@ -111,6 +111,7 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/deepExtend", ".
             this.__pausing = {};
             this.__working = {};
             this.__stepCount = 0;
+            this.__subs = {};
             for (var key in this) {
                 reserve.push(key);
             }
@@ -148,6 +149,10 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/deepExtend", ".
                     clearTimeout(this.__timer);
                 }
                 if (typeof step == "string") {
+                    if (this.__subs[step]) {
+                        this.__subs[step].apply(this, arguments);
+                        return;
+                    }
                     var stepName = step;
                     step = this.__stepInstances[step];
                 }
@@ -203,6 +208,9 @@ define("./flow", [ "./util/class", "./util/eventPlugin", "./util/deepExtend", ".
                 this.__sync = true;
                 callback();
                 this.__sync = false;
+            },
+            _sub: function(subName, fn) {
+                this.__subs[subName] = fn;
             },
             _addStep: function(name, StepClass) {
                 this.__steps[name] = StepClass;

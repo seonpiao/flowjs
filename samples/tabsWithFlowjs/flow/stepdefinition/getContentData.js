@@ -11,12 +11,12 @@ define(function(require,exports,module){
             _describeData:function(){
                 return {
                     input:{
-                        dataURL:{
+                        contentDataURL:{
                             type:'string'
                         }
                     },
                     output:{
-                        data:{
+                        contentData:{
                             type:'object'
                         }
                     }

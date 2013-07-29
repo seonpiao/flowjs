@@ -16,10 +16,10 @@ define(function(require,exports,module){
                         }
                     },
                     output:{
-                        titles:{
+                        titleContainers:{
                             type:'object'
                         },
-                        contents:{
+                        contentContainers:{
                             type:'object'
                         }
                     }

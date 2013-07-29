@@ -18,6 +18,9 @@ define(function(require,exports,module){
                         data:{
                             type:'object',
                             empty:true
+                        },
+                        wrapper:{
+                            type:'object'
                         }
                     }
                 };

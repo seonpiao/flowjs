@@ -11,12 +11,13 @@ define(function(require,exports,module){
             _describeData:function(){
                 return {
                     input:{
-                        titles:{type:'object'},
-                        contents:{type:'object'},
+                        titleContainers:{type:'object'},
+                        contentContainers:{type:'object'},
                         goto:{type:'number'}
                     },
                     output:{
-                        curr:{type:'number'}
+                        curr:{type:'number'},
+                        contentWrapper:{type:'object'}
                     }
                 };
             }

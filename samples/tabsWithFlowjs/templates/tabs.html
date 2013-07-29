@@ -5,6 +5,6 @@
 </ul>
 <ul class="tabs-content">
     <%for(i = 0; i < list.length; i ++) {%>
-    	<li class="tab-content" data-tabs-elem="content"><%=list[i].content%></li>
+    	<li class="tab-content" data-tabs-elem="content" data-tabs-contentdataurl="<%=list[i].content.dataURL%>" data-tabs-contenttemplateurl="<%=list[i].content.templateURL%>"></li>
     <%}%>
 </ul>

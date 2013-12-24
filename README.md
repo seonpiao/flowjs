@@ -110,7 +110,7 @@ Flowjs还可以帮助开发者提高自己代码的逻辑性和可读性。《�
     flow.implement('step4', {
         go: function(data, callback, trigger) {
             $(document).on('click',function(){
-                trigger('docclick');
+                trigger(data,'docclick');
             });
             callback(data,'case1');
         }

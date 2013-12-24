@@ -226,5 +226,42 @@ describe('Flowjs', function() {
                 done();
             });
         });
+        it('传入null数据是，也能够正常运行', function(done) {
+            var flow = new Flow();
+            var n = 0;
+
+            flow.addStep('step1')
+            flow.addStep('step2');
+            flow.addStep('step3');
+
+            flow.implement('step1', {
+                go: function(data, callback) {
+                    n++;
+                    callback(null);
+                }
+            });
+            flow.implement('step2', {
+                go: function(data, callback) {
+                    n++;
+                    callback(null);
+                }
+            });
+            flow.implement('step3', {
+                go: function(data, callback) {
+                    n++;
+                    callback(null);
+                }
+            });
+
+            flow.begin(null);
+            flow.go('step1');
+            flow.go('step2');
+            flow.go('step3');
+
+            flow.on('end',function(){
+                assert.equal(3,n);
+                done();
+            });
+        });
     })
 })

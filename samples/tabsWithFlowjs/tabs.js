@@ -6,8 +6,8 @@ define(function(require, exports, module) {
 
     var flow = new Flow({
         wrapper: wrapper,
-        dataURL: 'http://static.iqiyi.com/others/tabsWithFlowjs/data/jobs.json',
-        templateURL: 'http://static.iqiyi.com/others/tabsWithFlowjs/templates/tabs.html'
+        dataURL: 'data/jobs.json',
+        templateURL: 'templates/tabs.html'
     });
 
     var steps = {
@@ -26,7 +26,7 @@ define(function(require, exports, module) {
 
     for (var stepName in steps){
         if(steps.hasOwnProperty(stepName)){
-            flow.implement(stepName,steps[stepName]);
+            flow._flow.implement(stepName,steps[stepName]);
         }
     }
 

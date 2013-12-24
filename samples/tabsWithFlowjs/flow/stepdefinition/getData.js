@@ -1,29 +1,14 @@
 define(function(require,exports,module){
-    var Class = Flowjs.Class;
-    var Step = Flowjs.Step;
-    var TabsData = Class({
-        extend:Step,
-        construct:function(options){
-            this.callsuper(options);
+    module.exports = {
+        input:{
+            dataURL:{
+                type:'string'
+            }
         },
-        isAbstract:true,
-        methods:{
-            _describeData:function(){
-                return {
-                    input:{
-                        dataURL:{
-                            type:'string'
-                        }
-                    },
-                    output:{
-                        data:{
-                            type:'object'
-                        }
-                    }
-                };
+        output:{
+            data:{
+                type:'object'
             }
         }
-    });
-
-    module.exports = TabsData;
+    };
 });

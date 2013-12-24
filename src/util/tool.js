@@ -6,12 +6,15 @@
  */
 
 define(function (require, exports, module) {
+    if(typeof global === 'undefined'){
+        global = window;
+    }
     module.exports = {
         isArray: Array.isArray || function (arg) {
             return Object.prototype.toString.call(arg) == '[object Array]';
         },
         log:function(){
-            if(window.console){
+            if(global.console){
                 if(console.log.apply){
                     console.log.apply(console,arguments);
                 }
@@ -23,7 +26,7 @@ define(function (require, exports, module) {
             }
         },
         error:function(){
-            if(window.console){
+            if(global.console){
                 if(console.error.apply){
                     console.error.apply(console,arguments);
                 }

@@ -2,22 +2,22 @@
 	{
 		"title" : "coder",
 		"content" : {
-			"dataURL" : "http://static.iqiyi.com/others/tabsWithFlowjs/data/jobs/coder.json",
-			"templateURL" : "http://static.iqiyi.com/others/tabsWithFlowjs/templates/tabs/job.html"
+			"dataURL" : "data/jobs/coder.json",
+			"templateURL" : "templates/tabs/job.html"
 		}
 	},
 	{
 		"title" : "writer",
 		"content" : {
-			"dataURL" : "http://static.iqiyi.com/others/tabsWithFlowjs/data/jobs/writer.json",
-			"templateURL" : "http://static.iqiyi.com/others/tabsWithFlowjs/templates/tabs/job.html"
+			"dataURL" : "data/jobs/writer.json",
+			"templateURL" : "templates/tabs/job.html"
 		}
 	},
 	{
 		"title" : "user",
 		"content" : {
-			"dataURL" : "http://static.iqiyi.com/others/tabsWithFlowjs/data/jobs/user.json",
-			"templateURL" : "http://static.iqiyi.com/others/tabsWithFlowjs/templates/tabs/job.html"
+			"dataURL" : "data/jobs/user.json",
+			"templateURL" : "templates/tabs/job.html"
 		}
 	}
 ]}

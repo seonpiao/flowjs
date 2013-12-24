@@ -109,5 +109,47 @@ describe('Flowjs', function() {
                 done();
             });
         });
+        it('传入条件分支的数据，应该就是context中保存的数据对象', function(done) {
+            var flow = new Flow();
+
+            flow.addStep('step1')
+            flow.addStep('step2',{
+                type:'condition'
+            });
+            flow.addStep('step3');
+            flow.addStep('step4');
+
+            flow.implement('step1', {
+                go: function(data, callback) {
+                    callback();
+                }
+            });
+            flow.implement('step2', {
+                go: function(data, callback) {
+                    callback(data,'case1');
+                }
+            });
+            flow.implement('step3', {
+                go: function(data, callback) {
+                    callback();
+                }
+            });
+
+            var origin = {};
+
+            flow.begin(origin);
+            flow.go('step1');
+            flow.go('step2',{
+                cases:{
+                    case1:function(data){
+                        assert.equal(origin.__flowDataId,data.__flowDataId);
+                        done();
+                    }
+                }
+            });
+            flow.on('end',function(){
+                done();
+            });
+        });
     })
 })

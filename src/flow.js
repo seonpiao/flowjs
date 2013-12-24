@@ -11,6 +11,7 @@ define(function(require,exports,module){
         return Array.prototype.slice.call(obj,0);
     };
     var EventPlugin = require('./util/eventPlugin');
+    var log = require('./util/tool').log;
     var Flow = Class({
         construct:function(options){
             options = options || {};
@@ -43,6 +44,7 @@ define(function(require,exports,module){
             begin:function(data){
                 context = {};
                 context.data = data || {};
+                context.data.__flowDataId = new Date().getTime();
                 this.__context = context;
                 setTimeout(function(){
                     this.__go(context);
@@ -113,19 +115,18 @@ define(function(require,exports,module){
                 var stepInfo = context.current;
                 var cases = stepInfo.cases;
                 if(cases[condition]){
-                    cases[condition].apply(this,[this.__getCurrentStepData(context)]);
+                    cases[condition].apply(this,[context.data]);
                 }
                 //不存在的流程分支，直接结束流程
                 else{
                     this.fire({type:'end'});
                 }
             },
-            __eventCallback:function(data,event,context){
-                extend(context.data,this.__getStepData(context.current,data));
-                var stepInfo = context.current;
+            __eventCallback:function(stepInfo,data,event,context){
+                extend(context.data,this.__getStepData(stepInfo,data));
                 var events = stepInfo.events;
                 if(events[event]){
-                    events[event].apply(this,[this.__getCurrentStepData(context)]);
+                    events[event].apply(this,[context.data]);
                 }
             },
             __getCurrentStepData:function(context){
@@ -139,7 +140,7 @@ define(function(require,exports,module){
                 struct = struct || {};
                 var result = {};
                 for(var key in struct){
-                    if(struct[key].empty === false && !data.hasOwnProperty(key)){
+                    if(struct[key].empty !== true && !data.hasOwnProperty(key)){
                         this.fire({type:'error',data:{message:'Key [' + key + '] is not allow empty'}});
                         return result;
                     }
@@ -156,6 +157,7 @@ define(function(require,exports,module){
             },
             __go:function(context){
                 var stepInfo = context.current;
+                log('开始执行：' + stepInfo.name + '[' + context.data.__flowDataId + ']');
                 var def = this.__definations[stepInfo.name] || {};
                 var inputData = this.__getData(def.input,context.data);
                 if(def && def.type === 'condition'){
@@ -170,7 +172,7 @@ define(function(require,exports,module){
                             this.__stepCallback(outputData || inputData,context);
                         }.bind(this),
                         function(outputData,event){
-                            this.__eventCallback(outputData || inputData,event,context);
+                            this.__eventCallback(stepInfo, outputData || inputData,event,context);
                         }.bind(this)
                     );
                 }

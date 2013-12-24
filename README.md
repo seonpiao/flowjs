@@ -47,6 +47,14 @@ Flowjs还可以帮助开发者提高自己代码的逻辑性和可读性。《�
         }
     });
 
+测试
+-------
+
+nodejs环境下
+
+    npm install -g mocha
+    mocha test/
+
 《流程》定义
 -------
 

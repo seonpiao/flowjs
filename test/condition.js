@@ -1,11 +1,11 @@
 require('seajs');
 var assert = require("assert");
-var Flowjs = require('../src/index');
+var Flow = require('../src/index');
 
 describe('Flowjs', function() {
     describe('condition', function() {
         it('选择一个条件分支', function(done) {
-            var flow = new Flowjs.Flow();
+            var flow = new Flow();
             var n = 0;
 
             flow.addStep('step1')
@@ -58,7 +58,7 @@ describe('Flowjs', function() {
             });
         });
         it('选择一个不存在的分支，流程应该能正确运行', function(done) {
-            var flow = new Flowjs.Flow();
+            var flow = new Flow();
             var n = 0;
 
             flow.addStep('step1')

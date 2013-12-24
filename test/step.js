@@ -1,11 +1,11 @@
 require('seajs');
 var assert = require("assert");
-var Flowjs = require('../src/index');
+var Flow = require('../src/index');
 
 describe('Flowjs', function() {
     describe('step', function() {
         it('步骤连续运行', function(done) {
-            var flow = new Flowjs.Flow();
+            var flow = new Flow();
             var n = 0;
 
             flow.addStep('step1')
@@ -42,7 +42,7 @@ describe('Flowjs', function() {
             });
         });
         it('数据在流程中传递', function(done) {
-            var flow = new Flowjs.Flow();
+            var flow = new Flow();
 
             flow.addStep('step1',{
                 input:{n:{empty:false}},
@@ -89,7 +89,7 @@ describe('Flowjs', function() {
             });
         });
         it('input中未定义的数据，步骤内无法使用', function(done) {
-            var flow = new Flowjs.Flow();
+            var flow = new Flow();
 
             flow.addStep('step1',{
                 input:{n:{empty:false}},
@@ -118,7 +118,7 @@ describe('Flowjs', function() {
             flow.go('step2');
         });
         it('output中未定义的数据，不会改变流程中的数据', function(done) {
-            var flow = new Flowjs.Flow();
+            var flow = new Flow();
 
             flow.addStep('step1',{
                 input:{n:{empty:false}},
@@ -164,7 +164,7 @@ describe('Flowjs', function() {
             });
         });
         it('对不允许为空的数据做检查', function(done) {
-            var flow = new Flowjs.Flow();
+            var flow = new Flow();
 
             flow.addStep('step1',{
                 input:{n:{empty:false}},
@@ -198,7 +198,7 @@ describe('Flowjs', function() {
             });
         });
         it('未实现的步骤也能正确跳过', function(done) {
-            var flow = new Flowjs.Flow();
+            var flow = new Flow();
 
             flow.addStep('step1');
             flow.addStep('step2');

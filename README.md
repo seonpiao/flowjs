@@ -1,180 +1,168 @@
-flowjs
+Flowjs
 ======
 
 一个开放的，面向业务流程的，可灵活扩展和定制的前端业务开发框架。
+
+本次0.5.x的更新相比之前版本有巨大的变化。
+
+* 极大的简化了《流程》和《步骤》的定义。
+* 简化输入输出数据的校验，不做深度校验，提高执行效率（看未来是否有需要加深度校验）
+* 内部通过context的传递来避免多次调用时，步骤数据会互相覆盖的情况。
+* 开始编写测试用例。
 
 框架思路
 -------
 
 互联网产品的特点就是快速的迭代更新，这就对前端的响应速度提出了挑战。flowjs的思路，就是通过抽象变化的产品形态背后相对稳定的业务流程，来以不变应万变！
 
-框架由Flow（流程）和Step（步骤）两个类组成。Flow负责定义一个业务逻辑的流程，Step负责定义流程中的一个步骤。
-这与一个流程图很类似，未来我们会提供工具来实现流程图与代码的互相转换。这样就可以实现可视化的流程制定。
+框架由《流程》和《步骤》两个部分组成。《流程》负责定义一个业务逻辑的流程，《步骤》负责定义流程中一个步骤的实现。
 
-Step共分三种，一种是普通步骤Step类，一种是条件分支Condition类，另外一种是用户行为分支Input类。
+开发同学可以将一个产品，定义为Flowjs的一个《流程》。当产品细节发生变化时，开发同学可以在基于流程不变的情况下，通过快速修改对应的步骤，来快速响应产品变化。
 
-一个普通步骤，不能存在两个下一步。例如下面的例子是不允许的，因为在流程图中，一个普通节点是不能有两个分支的。
+并且一个产品流程可以开放出来，类似的产品可以复用该《流程》，用自己的《步骤》实现来迅速完成自己产品的开发。
 
-    this._go('步骤1');
-    this._go('步骤2');
-    this._go('步骤3',null,{
+Flowjs还可以帮助开发者提高自己代码的逻辑性和可读性。《流程》代码与流程图有异曲同工之处。能够让其他开发者更容易的读懂和维护你的代码。未来计划提供 流程图 与 《流程》代码 之间互相转换的工具。
+
+注意事项
+-------
+
+每一个步骤需要明确的定义本步骤的输入与输出数据，否则会获取不到需要的流程数据，本步骤对数据做出的修改也无法提交到流程里。
+
+允许一个步骤不经过定义，就直接使用。流程在执行时会自动跳过该步骤。便于先跑通主要流程，再实现具体步骤。
+
+步骤与步骤之间尽可能的减少依赖
+
+每一个步骤只能调用一次callback通知框架步骤完成
+
+一个《步骤》，不能存在两个下一步。例如下面的例子是不允许的，因为“步骤1”同时有两个下一步“步骤2”和“步骤4”，因为在流程图中，一个普通节点是不能有两个分支的。
+
+    flow.go('步骤1');
+    flow.go('步骤2');
+    flow.go('步骤3',{
         cases:{
             'yes':function(){
-                this._go('步骤1');
-                this._go('步骤4');
+                flow.go('步骤1');
+                flow.go('步骤4');
             }
         }
     });
 
-Step类需要明确的定义本步骤所需要的参数。
-
-基于同一个Flow，可以通过实现不同的Step类的子类来实现扩展与定制。
-
-开发者可以贡献抽象的Flow，也可以贡献实现好的Step，达到开放、共享的目的。
-
-Flow定义
+《流程》定义
 -------
 
+    var Flow = require('flowjs');
 
-    define(function(require, exports, module) {
-        var Class = Flowjs.Class;
-        var Flow = Flowjs.Flow;
-        var CommonFocusFlow = Class({
-            extend:Flow,
-            construct:function(options){
-                this.callsuper(options);
-                this._addStep('step1',require('./stepdefinition/step1'));
-                this._addStep('step2',require('./stepdefinition/step2'));
-                this._addStep('step3',require('./stepdefinition/step3'));
-                this._addStep('step4',require('./stepdefinition/step4'));
-                this._addStep('step5',require('./stepdefinition/step5'));
-                this._addStep('step6',require('./stepdefinition/step6'));
-            },
-            methods:{
-                //初始化流程
-                start:function(){
-                    var _this = this;
-                    this._go('step1');
-                    this._go('step2');
-                    this._go('step3');
-                    this._go('step4');
-                    this._go('step5',null,{
-                        cases:{
-                            '1':function(){
-                                _this._go('step1');
-                            },
-                            '2':function(){
-                                _this._go('step6');
-                            }
-                        },defaultCase:function(){
-                            _this._go('step4');
-                        }
-                    });
-                }
+    var flow = new Flow();
+
+    //《步骤》定义
+    flow.addStep('step1',{
+        type:'step',  //《步骤》类型。step/condition/event。可选
+        input:{ //输入数据
+            param1:{
+                empty:false //是否允许为空,默认为true
             }
-        });
-
-        module.exports = CommonFocusFlow;
+        },
+        output:{ //输出数据，如果param1未定义为输出数据，那么步骤内对param1做出的修改，不会保存的《流程》中
+            param1:{
+                empty:false //是否允许为空,默认为true
+            }
+        }
+    });
+    flow.addStep('step2'); //也可以仅仅这样来定义一个《步骤》。这将会定义一个type为step，没有输入输出数据的《步骤》
+    flow.addStep('step3',{ //这样可以定义一个condition类型的《步骤》
+        type:'condition'
+    });
+    flow.addStep('step4',{ //这样可以定义一个event类型的《步骤》
+        type:'event'
     });
 
-以上流程首先会顺序执行 1 -> 2 -> 3 -> 4 -> 5
-
-step5是一个条件判断的步骤，这里会进行判断
-
-如果结果为1，则继续 1 -> 2 -> 3 -> 4 -> 5
-
-如果结果为2，则执行 6
-
-其余情况，则继续 4 -> 5
-
-Step定义
--------
-
-基类的定义
-
-    define(function(require,exports,module){
-        var Class = Flowjs.Class;
-        var Step = Flowjs.Step;
-        var Next = Class({
-            extend:Step,
-            isAbstract:true,
-            construct:function(options){
-                this.callsuper(options);
-            },
-            methods:{
-                _describeData:function(){
-                    return {
-                        input:{
-                            frames:{
-                                type:'object'
-                            },
-                            curr:{
-                                type:'number'
-                            }
-                        },
-                        output:{
-                            curr:{
-                                type:'number'
-                            }
-                        }
-                    };
-                }
-            }
-        });
-        
-        module.exports = Next;
+    //《步骤》的实现
+    flow.implement('step1', {
+        /**
+         * 《步骤》的go方法，会作为《步骤》的入口，《流程》在执行到该《步骤》时，会执行go方法
+         * @param  {[object]}   data    如果定义了input，那么会传入需要输入的数据
+         * @param  {Function} callback  《步骤》执行完成后，需要调用callback通知《流程》
+         */
+        go: function(data, callback) {
+            callback();
+        }
+    });
+    flow.implement('step2', {
+        go: function(data, callback) {
+            callback();
+        }
+    });
+    /**
+     * 这是一个condition类型的《步骤》
+     * @param  {Function} callback  这个回调的原型是function(data,condition){}
+     * 其中condition表示步骤选择的分支。例子中表示，执行该步骤后，选择case1分支作为后续的步骤继续执行
+     */
+    flow.implement('step3', {
+        go: function(data, callback) {
+            callback(data,'case1');
+        }
+    });
+    /**
+     * 这是一个event类型的《步骤》
+     * @param  {function} callback 这个是步骤结束后的回调，同step类型的回调
+     * @param  {function} trigger 这个是有事件发生时，用于通知《流程》的方法
+     */
+    flow.implement('step4', {
+        go: function(data, callback, trigger) {
+            $(document).on('click',function(){
+                trigger('docclick');
+            });
+            callback(data,'case1');
+        }
     });
 
-
-
-实现类的定义
-
-    define(function(require,exports,module){
-        module.exports = {
-            methods:{
-                _process:function(data,callback){
-                    var total = data.frames.length;
-                    var curr = data.curr + 1;
-                    if(curr == total){
-                        curr = 0;
+    /**
+     * begin的原型为function(data){}
+     * 其中data为传入到流程中的初始数据
+     */
+    flow.begin();
+    flow.go('step1');
+    flow.go('step2');
+    flow.go('step3',{
+        cases:{
+            //定义case1条件分支
+            case1:function(data){
+                flow.begin(data);
+                flow.go('step4',{
+                    events:{
+                        //定义docclick事件发生时的处理
+                        docclick:function(data){
+                            flow.begin(data);
+                            flow.go('step5');
+                        }
                     }
-                    callback(null,{curr:curr});
-                }
+                });
             }
-        };
+        }
     });
-
-
-以上定义了一个步骤，要求输入的数据对象结构为：{curr:1,frames:{}}；输出的数据对象结果为{curr:2}
+    //一个流程的所有除event类型的步骤都执行完毕后，会触发end事件。
+    flow.on('end',function(){
+        
+    });
 
 API
 ---------
 
 Flow
 
-    init：function(){}
-
-        abstract
-
-        子类需要实现该方法来定义流程。
-
     implement：function(stepName,options){}
 
         public
 
-        实现流程中的一个步骤。
+        实现《流程》中的一个《步骤》。
 
         stepName
 
-            步骤名
+            《步骤》名
 
-        options.construct
+        options
 
-            步骤类的构造函数
-
-        options.methods
-
-            步骤类的方法
+            实现《步骤》的相关参数
 
     destroy：function(){}
 
@@ -182,296 +170,39 @@ Flow
 
         销毁流程，会调用每一个执行过的步骤的destroy方法，让每个步骤有机会去释放资源。
 
-    _go：function(step,data,options){}
+    go：function(step,options){}
 
-        protected
+        public
 
-        执行到指定的步骤
+        用于定义《流程》
 
         step
 
             步骤名
 
-        data
+        options.events
 
-            需要传入步骤的数据，优先级高于数据池中的数据。
-
-        options.inputs
-
-            定义传入Input类型步骤的输入项
+            定义传入event类型《步骤》的事件集
 
         options.cases
 
-            定义传入Condition类型步骤的分支项
+            定义传入condition类型《步骤》的分支集
 
-    _pause：function(){}
+    addStep：function(name,options){}
 
-        protected
-
-        暂停流程
-
-    _resume：function(){}
-
-        protected
-
-        从暂停的步骤开始恢复流程
-
-    _sync：function(callback){}
-
-        protected
-
-        同步执行callback中执行的步骤。
-
-        callback
-
-            可以在改callback中同步的执行步骤
-
-    _addStep：function(name,StepClass){}
-
-        protected
+        public
 
         向流程注册步骤
 
         name
 
-            定义步骤名
+            《步骤》名
 
-        StepClass
+        options
 
-            步骤的定义类
+            定义《步骤》的相关参数
 
-    _addInterface：function(name,fn){}
-
-        protected
-
-        向流程添加接口
-
-        name
-
-            接口名
-
-        fn
-
-            接口实现
-
-    _getData：function(keys){}
-
-        protected
-
-        获取数据池中的数据
-
-        keys
-
-            数据的key。可以是单个key的字符串，也可以是由多个key组成的字符串数组
-
-        返回
-
-            带有keys的数据对象
-
-Step
-
-Condition
-
-Input
-
-注意事项
----------
-
-步骤与步骤之间尽可能的减少依赖
-
-每一个步骤只能调用一次callback通知框架步骤完成
-
-v0.1.0发布
----------
-
-初始版本
-
-v0.2.0发布
----------
-
-更新内容
-
-    流程初始化接口由 start 修改为 init 
-    抽象类的定义需要显式通过abstract属性来指定
-    Class方法加入对抽象方法实现的检查
 
 升级指导
-
-    改为调用init方法启动流程初始化
-    所有抽象类都需要加入abstract:true来显式指明该类是抽象类
-        extend:Step,
-        construct:function(options){
-            options = options || {};
-            this.callsuper(options);
-            this._cases = options.cases || {};
-            this._default = options.defaultCase;
-        },
-        isAbstract:true,
-        methods:{
-
-v0.2.1发布
----------
-
-更新内容
-
-    为了提高效率，连续步骤的执行改为递归方式，并且为了防止调用栈溢出，每执行20步，就退出调用栈一次。
-
-升级指导
-
-    对使用者无影响
-
-v0.2.2发布
----------
-
-更新内容
-
-    去除步骤不能直接返回输入数据的限制
-
-升级指导
-
-    对使用者无影响
-
-v0.2.3发布
----------
-
-更新内容
-
-    修复通过_go方法传入的data，即便步骤没有定义有输入项，步骤内也能使用该数据的问题
-
-升级指导
-
-    需要排查步骤中是否有使用过未定义为输入项，而直接通过go方法传入的数据项。
-
-v0.2.4发布
----------
-
-更新内容
-
-    调整流程执行下一步的逻辑，异步流程不再从队列里面读取下一步。
-        
-        原来的方式，连续执行go之后，会生成一个队列。当其中一个步骤执行失败时，这个队列不会清空。
-        这样会导致，下次再连续执行go之后，会连同之前没执行完的步骤一块生成一个新队列。
-        而这次执行会从上一次没执行完的步骤开始执行。
-
-    修复checkData方法，如果传入data为空，就不会做数据检查的bug
-
-升级指导
-
-    对使用者无影响
-
-v0.2.5发布
----------
-
-更新内容
-
-    _go方法修改为可以在接收在任意时刻传入的参数
-    修复一个步骤的回调函数，可以在步骤内多次调用的问题
-
-升级指导
-
-    对使用者无影响
-
-v0.2.6发布
----------
-
-更新内容
-
-    传入步骤的data修改为深拷贝数据，步骤内的任何修改都不会对数据源有影响
-
-升级指导
-
-    对使用者无影响
-
-v0.2.7发布
----------
-
-更新内容
-
-    修复跳过未实现步骤时，没有清空队列的bug
-
-升级指导
-
-    对使用者无影响
-
-v0.3.0发布
----------
-
-更新内容
-
-    getData修改返回参数类型。如果传入是数组形式的参数，那么返回一个结果对象。如果传入是字符串形式的参数，那么直接返回对应的参数值，而不以对象形式进行组织了。
-
-升级指导
-
-    需要注意原有使用getData方法的地方
-
-v0.3.1发布
----------
-
-更新内容
-
-    对步骤数据进行深拷贝时，加入是否是plain object的判断，只有是plain object才进行深拷贝，否则只进行浅拷贝
-
-    condition或input步骤，_select之后的流程，通过setTimeout启动新的调用栈执行。否则会出现同步执行到子流程中的步骤时，才会执行前面主流程的清除队列的操作。这样会导致新加入的子流程步骤也一并被清除，使子流程无法执行
-
-升级指导
-
-    接口无变化，对使用者无影响
-
-v0.3.2发布
----------
-
-更新内容
-
-    修复生成step id时，IE不兼容Date.now的问题
-
-升级指导
-
-    接口无变化，对使用者无影响
-
-v0.3.3发布
----------
-
-更新内容
-
-    修复Input步骤后无法执行下一步的Bug
-
-升级指导
-
-    接口无变化，对使用者无影响
-
-v0.3.4发布
----------
-
-更新内容
-
-    对数组的检查，允许不传item的定义
-    setData对于对象和数组类型，使用深拷贝的方式存储数据
-
-升级指导
-
-    接口无变化，对使用者无影响
-
-v0.4.0发布
----------
-
-更新内容
-
-    通过_select启动分支流程时，会调用flow的新方法__newflow，避免与另外的流程发生意外衔接
-    去掉_pause和_resume方法。如需中断流程，请在自己的流程中去实现
-
-升级指导
-
-    需要排查使用_pause和_resume方法的地方，修改流程
-
-v0.4.1发布
----------
-
-更新内容
-
-    原有实现，当同时调用两次接口（即同时两次进入一个子流程），第二次调用会清除第一次的timer，导致第一次调用不能正常执行。
-    目前的做法，是根据__prev判断，是否是一个子流程的第一步。如果是第一步，则不清除定时器，那么在第二步执行时，所清除的实际是本子流程第一步启动的定时器，这样就不会清除其他子流程所启动的执行定时器了。
-    同时，执行队列中不再存储每一步的数据，而只存储每一个子流程的第一步，并且不再清除执行队列，保证每一个子流程的第一步都能够被正确执行。
-
-升级指导
-
-    内部流程优化，对使用者无影响
+-------
+    0.5.0开始，《流程》和《步骤》的定义方式全部发生变化，请老版本代码按照0.5.0的方式重新定义

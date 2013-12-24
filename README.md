@@ -47,6 +47,34 @@ Flowjs还可以帮助开发者提高自己代码的逻辑性和可读性。《�
         }
     });
 
+最佳实践
+-------
+
+把Flowjs包到你的类中，并留出接口定制步骤，比如，构造函数：
+
+    function YouClass(options){
+        this._flow = new Flow();
+        if(options && options.steps){
+            var steps = options.steps;
+            var flow = this._flow;
+            for(var stepName in steps){
+                if(steps.hasOwnProperty(stepName)){
+                    flow.implement(stepName,steps[stepName]);
+                }
+            }
+        }
+    }
+
+    var obj = new YouClass({
+        steps:{
+            'step1':{
+                go:function(){
+
+                }
+            }
+        }
+    });
+
 测试
 -------
 

@@ -19,7 +19,7 @@ define(function(require,exports,module){
             this.__definations = {};
             this.__subs = {};
             this.__context = null;
-            this.__contextId = 0;
+            this.__passBy = {};
         },
         plugins:[new EventPlugin()],
         methods:{
@@ -28,12 +28,12 @@ define(function(require,exports,module){
             },
             //销毁流程，释放资源
             destroy:function(){
-                var ins = this.__steps;
+                var ins = this.__passBy;
                 for(var stepName in ins){
                     if(ins.hasOwnProperty(stepName)){
-                        var step = ins[stepName];
-                        var stepData = this.__getStepData(step);
-                        try{step.destroy(stepData);}catch(e){}
+                        var stepInfo = ins[stepName];
+                        var stepData = this.__getStepData(stepInfo);
+                        try{stepInfo.step.destroy(stepData);}catch(e){}
                     }
                 }
             },
@@ -44,7 +44,7 @@ define(function(require,exports,module){
             begin:function(data){
                 context = {};
                 context.data = data || {};
-                context.data.__flowDataId = new Date().getTime();
+                context.data.__flowDataId = context.data.__flowDataId || new Date().getTime();
                 this.__context = context;
                 setTimeout(function(){
                     this.__go(context);
@@ -157,6 +157,7 @@ define(function(require,exports,module){
             },
             __go:function(context){
                 var stepInfo = context.current;
+                this.__passBy[stepInfo.name] = stepInfo;
                 log('开始执行：' + stepInfo.name + '[' + context.data.__flowDataId + ']');
                 var def = this.__definations[stepInfo.name] || {};
                 var inputData = this.__getData(def.input,context.data);

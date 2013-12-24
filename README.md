@@ -50,28 +50,31 @@ Flowjs还可以帮助开发者提高自己代码的逻辑性和可读性。《�
 最佳实践
 -------
 
-把Flowjs包到你的类中，并留出接口定制步骤，比如，构造函数：
+把Flowjs包到你的类中，提供默认的《步骤》实现，再留出接口定制步骤：
 
     function YouClass(options){
         this._flow = new Flow();
+        var steps = {
+            'step1':require('./step1'),
+            'step2':require('./step2'),
+            'step3':require('./step3')
+        };
         if(options && options.steps){
-            var steps = options.steps;
-            var flow = this._flow;
-            for(var stepName in steps){
-                if(steps.hasOwnProperty(stepName)){
-                    flow.implement(stepName,steps[stepName]);
-                }
+            Object.extend(steps,options.steps);
+        }
+        var flow = this._flow;
+        for(var stepName in steps){
+            if(steps.hasOwnProperty(stepName)){
+                flow.implement(stepName,steps[stepName]);
             }
         }
     }
 
-把《步骤》的实现，写到单独的文件中，然后在实例化时引入
+实例化时，可以用其他步骤替换默认实现
 
     var obj = new YouClass({
         steps:{
-            'step1':require('./step1'),
-            'step2':require('./step2'),
-            'step3':require('./step3')
+            'step2':require('./step2')
         }
     });
 

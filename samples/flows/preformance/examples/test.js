@@ -1,24 +1,46 @@
 define(function(require, exports, module) {
 
-    var Flow = require('../src/flow/CommonFocus');
+    var flow = new Flowjs.Flow();
 
-    var wrapper = Q.$('[data-widget-focus=slidefocus]');
+            flow.addStep('step1',{
+                input:{n:{empty:false}},
+                output:{n:{empty:false}}
+            })
+            flow.addStep('step2',{
+                input:{n:{empty:false}},
+                output:{n:{empty:false}}
+            });
+            flow.addStep('step3',{
+                input:{n:{empty:false}},
+                output:{n:{empty:false}}
+            });
 
-    var flow = new Flow({wrapper:wrapper});
+            flow.implement('step1', {
+                go: function(data, callback) {
+                    data.n++;
+                    callback(data);
+                }
+            });
+            flow.implement('step2', {
+                go: function(data, callback) {
+                    data.n++;
+                    callback(data);
+                }
+            });
+            flow.implement('step3', {
+                go: function(data, callback) {
+                    data.n++;
+                    callback(data);
+                }
+            });
 
-    var steps = {
-        '循环体':require('../src/steps/body'),
-        '是否跳出循环':require('../src/steps/jump')
-    };
+            var data = {n:0};
 
-    for (var stepName in steps){
-        if(steps.hasOwnProperty(stepName)){
-            flow.implement(stepName,steps[stepName]);
-        }
-    }
+            flow.begin(data);
+            flow.go('step1');
+            flow.go('step2');
+            flow.go('step3');
 
     module.exports = flow;
-
-    window.focus = module.exports;
 });
 

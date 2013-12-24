@@ -1,10 +1,10 @@
 define(function(require,exports,module){
-    window.Flowjs = {
+    module.exports = {
         V:'0.4.2',
         Class:require('./util/class'),
-        Flow:require('./flow'),
-        Step:require('./step'),
-        Condition:require('./condition'),
-        Input:require('./input')
+        Flow:require('./flow')
     };
+    if(typeof window !== 'undefined'){
+        window.Flowjs = module.exports;
+    }
 });

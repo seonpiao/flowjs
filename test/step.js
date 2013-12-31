@@ -197,6 +197,12 @@ describe('Flowjs', function() {
                 done();
             });
         });
+        it.skip('传入null或者false一类的值，不应判断为数据为空', function(done) {
+            
+        });
+        it.skip('一个步骤有两个下一步时报错', function(done) {
+            
+        });
         it('未实现的步骤也能正确跳过', function(done) {
             var flow = new Flow();
 

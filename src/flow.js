@@ -58,7 +58,7 @@ define(function(require,exports,module){
                 var _this = this;
                 if(typeof step == 'string'){
                     if(this.__subs[step]){
-                        this.__subs[step].apply(this,arguments);
+                        this.__subs[step].apply(this, [context.data]);
                     }
                     else{
                         var stepName = step;
@@ -97,8 +97,16 @@ define(function(require,exports,module){
                     }
                 }
             },
+            sub:function(subName,fn){
+                this.__subs[subName] = fn;
+            },
             addStep:function(stepName,stepDefination){
                 this.__definations[stepName] = stepDefination;
+                if(stepDefination.go){
+                    this.implement(stepName,{
+                        go:stepDefination.go
+                    })
+                }
             },
             __stepCallback:function(data,context){
                 extend(context.data,this.__getStepData(context.current,data));
@@ -114,6 +122,7 @@ define(function(require,exports,module){
                 extend(context.data,this.__getStepData(context.current,data));
                 var stepInfo = context.current;
                 var cases = stepInfo.cases;
+                log(stepInfo.name + ':' + condition);
                 if(cases[condition]){
                     cases[condition].apply(this,[context.data]);
                 }
@@ -142,6 +151,7 @@ define(function(require,exports,module){
                 for(var key in struct){
                     if(struct[key].empty !== true && !data.hasOwnProperty(key)){
                         this.fire({type:'error',data:{message:'Key [' + key + '] is not allow empty'}});
+                        log('Key [' + key + '] is not allow empty');
                         return result;
                     }
                     var value = data[key];

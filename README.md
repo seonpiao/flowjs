@@ -34,23 +34,10 @@ Flowjs还可以帮助开发者提高自己代码的逻辑性和可读性。《�
 
 每一个步骤只能调用一次callback通知框架步骤完成
 
-一个《步骤》，不能存在两个下一步。例如下面的例子是不允许的，因为“步骤1”同时有两个下一步“步骤2”和“步骤4”，因为在流程图中，一个普通节点是不能有两个分支的。
-
-    flow.go('步骤1');
-    flow.go('步骤2');
-    flow.go('步骤3',{
-        cases:{
-            'yes':function(){
-                flow.go('步骤1');
-                flow.go('步骤4');
-            }
-        }
-    });
-
 最佳实践
 -------
 
-把Flowjs包到你的类中，提供默认的《步骤》实现，再留出接口定制步骤：
+把Flowjs包到你的类中，提供默认的《步骤》实现。
 
     function YouClass(options){
         this._flow = new Flow();
@@ -70,13 +57,21 @@ Flowjs还可以帮助开发者提高自己代码的逻辑性和可读性。《�
         }
     }
 
-实例化时，可以用其他步骤替换默认实现
+对《步骤》的重写，可以通过引用新的步骤文件实现。例如：
 
-    var obj = new YouClass({
-        steps:{
-            'step2':require('./step2')
-        }
-    });
+    var steps = {
+        'step1':require('./step1'),
+        'step2':require('./step2'),
+        'step3':require('./step3')
+    };
+
+要重写step1，可以新创建一个step1文件newstep1，然后引用新文件
+
+    var steps = {
+        'step1':require('./newstep1'),
+        'step2':require('./step2'),
+        'step3':require('./step3')
+    };
 
 测试
 -------

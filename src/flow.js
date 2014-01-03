@@ -42,7 +42,10 @@ define(function(require,exports,module){
              * @return {[type]} [description]
              */
             begin:function(data){
-                context = {};
+                if(!this.hasOwnProperty('__contextCount')){
+                    this.__contextCount = 0;
+                }
+                var context = {__id:this.__contextCount++};
                 context.data = data || {};
                 context.data.__flowDataId = context.data.__flowDataId || new Date().getTime();
                 this.__context = context;
@@ -168,7 +171,7 @@ define(function(require,exports,module){
             __go:function(context){
                 var stepInfo = context.current;
                 this.__passBy[stepInfo.name] = stepInfo;
-                log('开始执行：' + stepInfo.name + '[' + context.data.__flowDataId + ']');
+                log("开始执行：" + stepInfo.name + "[" + context.data.__flowDataId + '_' + context.__id + "]");
                 var def = this.__definations[stepInfo.name] || {};
                 var inputData = this.__getData(def.input,context.data);
                 if(def && def.type === 'condition'){

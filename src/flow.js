@@ -105,7 +105,7 @@ define(function(require,exports,module){
             },
             addStep:function(stepName,stepDefination){
                 this.__definations[stepName] = stepDefination;
-                if(stepDefination.go){
+                if(stepDefination && stepDefination.go){
                     this.implement(stepName,{
                         go:stepDefination.go
                     })
@@ -127,6 +127,7 @@ define(function(require,exports,module){
                 var cases = stepInfo.cases;
                 log(stepInfo.name + ':' + condition);
                 if(cases[condition]){
+                    this.begin(context.data);
                     cases[condition].apply(this,[context.data]);
                 }
                 //不存在的流程分支，直接结束流程
@@ -138,6 +139,7 @@ define(function(require,exports,module){
                 extend(context.data,this.__getStepData(stepInfo,data));
                 var events = stepInfo.events;
                 if(events[event]){
+                    this.begin(context.data);
                     events[event].apply(this,[context.data]);
                 }
             },
@@ -170,32 +172,34 @@ define(function(require,exports,module){
             },
             __go:function(context){
                 var stepInfo = context.current;
-                this.__passBy[stepInfo.name] = stepInfo;
-                log("开始执行：" + stepInfo.name + "[" + context.data.__flowDataId + '_' + context.__id + "]");
-                var def = this.__definations[stepInfo.name] || {};
-                var inputData = this.__getData(def.input,context.data);
-                if(def && def.type === 'condition'){
-                    stepInfo.step.go(inputData,function(outputData,condition){
-                        this.__conditionCallback(outputData,condition,context);
-                    }.bind(this));
-                }
-                else if(def && def.type === 'event'){
-                    stepInfo.step.go(
-                        inputData,
-                        function(outputData){
+                if(stepInfo){
+                    this.__passBy[stepInfo.name] = stepInfo;
+                    log("开始执行：" + stepInfo.name + "[" + context.data.__flowDataId + '_' + context.__id + "]");
+                    var def = this.__definations[stepInfo.name] || {};
+                    var inputData = this.__getData(def.input,context.data);
+                    if(def && def.type === 'condition'){
+                        stepInfo.step.go(inputData,function(outputData,condition){
+                            this.__conditionCallback(outputData,condition,context);
+                        }.bind(this));
+                    }
+                    else if(def && def.type === 'event'){
+                        stepInfo.step.go(
+                            inputData,
+                            function(outputData){
+                                this.__stepCallback(outputData || inputData,context);
+                            }.bind(this),
+                            function(outputData,event){
+                                this.__eventCallback(stepInfo, outputData || inputData,event,context);
+                            }.bind(this)
+                        );
+                    }
+                    else{
+                        stepInfo.step.go(inputData,function(outputData){
                             this.__stepCallback(outputData || inputData,context);
-                        }.bind(this),
-                        function(outputData,event){
-                            this.__eventCallback(stepInfo, outputData || inputData,event,context);
-                        }.bind(this)
-                    );
+                        }.bind(this));
+                    }
                 }
-                else{
-                    stepInfo.step.go(inputData,function(outputData){
-                        this.__stepCallback(outputData || inputData,context);
-                    }.bind(this));
-                }
-            },
+            }
         }
     });
     

@@ -160,13 +160,11 @@ nodejs环境下
     flow.go('step3',{
         cases:{
             //定义case1条件分支
-            case1:function(data){
-                flow.begin(data);
+            case1:function(){
                 flow.go('step4',{
                     events:{
                         //定义docclick事件发生时的处理
-                        docclick:function(data){
-                            flow.begin(data);
+                        docclick:function(){
                             flow.go('step5');
                         }
                     }

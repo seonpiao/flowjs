@@ -43,11 +43,9 @@ describe('Flowjs', function() {
             flow.go('step2',{
                 cases:{
                     case1:function(data){
-                        flow.begin(data);
                         flow.go('step3');
                     },
                     case2:function(data){
-                        flow.begin(data);
                         flow.go('step4');
                     }
                 }
@@ -96,11 +94,9 @@ describe('Flowjs', function() {
             flow.go('step2',{
                 cases:{
                     case1:function(data){
-                        flow.begin(data);
                         flow.go('step3');
                     },
                     case2:function(data){
-                        flow.begin(data);
                         flow.go('step4');
                     }
                 }
@@ -142,13 +138,11 @@ describe('Flowjs', function() {
             flow.go('step2',{
                 cases:{
                     case1:function(data){
+                        console.log(data.__flowDataId)
                         assert.equal(origin.__flowDataId,data.__flowDataId);
                         done();
                     }
                 }
-            });
-            flow.on('end',function(){
-                done();
             });
         });
     })

@@ -14,7 +14,7 @@ define(function(require, exports, module) {
             return Object.prototype.toString.call(arg) == '[object Array]';
         },
         log: function() {
-            if (global.console && process && process.env && process.env.NODE_ENV !== 'production') {
+            if (global.console) {
                 if (console.log.apply) {
                     console.log.apply(console, arguments);
                 } else {
@@ -25,7 +25,7 @@ define(function(require, exports, module) {
             }
         },
         error: function() {
-            if (global.console && process && process.env && process.env.NODE_ENV !== 'production') {
+            if (global.console) {
                 if (console.error.apply) {
                     console.error.apply(console, arguments);
                 } else {

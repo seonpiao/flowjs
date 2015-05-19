@@ -166,7 +166,21 @@ define(function(require, exports, module) {
             __getData: function(struct, data) {
                 struct = struct || {};
                 var result = {};
+                if (isArray(struct)) {
+                    var mappedStruct = {};
+                    for (var i = 0; i < struct.length; i++) {
+                        mappedStruct[struct[i]] = {
+                            empty: true
+                        }
+                    }
+                    struct = mappedStruct;
+                }
                 for (var key in struct) {
+                    if (typeof struct[key] === 'string') {
+                        struct[key] = {
+
+                        }
+                    }
                     if (struct[key].empty !== true && !data.hasOwnProperty(key)) {
                         this.fire({
                             type: 'error',

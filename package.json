@@ -1,5 +1,5 @@
 {
   "name": "flow-js",
-  "version": "0.5.6",
+  "version": "0.6.0",
   "main": "src/flow.js"
 }

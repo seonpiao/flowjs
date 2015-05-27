@@ -209,22 +209,43 @@ define(function(require, exports, module) {
                     var def = this.__definations[stepInfo.name] || {};
                     var inputData = this.__getData(def.input, context.data);
                     if (def && def.type === 'condition') {
-                        stepInfo.step.go(inputData, function(outputData, condition) {
-                            this.__conditionCallback(outputData, condition, context);
+                        stepInfo.step.go(inputData, function(err, outputData, condition) {
+                            if (err) {
+                                this.fire({
+                                    type: 'error',
+                                    data: err
+                                })
+                            } else {
+                                this.__conditionCallback(outputData, condition, context);
+                            }
                         }.bind(this));
                     } else if (def && def.type === 'event') {
                         stepInfo.step.go(
                             inputData,
-                            function(outputData) {
-                                this.__stepCallback(outputData || inputData, context);
+                            function(err, outputData) {
+                                if (err) {
+                                    this.fire({
+                                        type: 'error',
+                                        data: err
+                                    })
+                                } else {
+                                    this.__stepCallback(outputData || inputData, context);
+                                }
                             }.bind(this),
                             function(outputData, event) {
                                 this.__eventCallback(stepInfo, outputData || inputData, event, context);
                             }.bind(this)
                         );
                     } else {
-                        stepInfo.step.go(inputData, function(outputData) {
-                            this.__stepCallback(outputData || inputData, context);
+                        stepInfo.step.go(inputData, function(err, outputData) {
+                            if (err) {
+                                this.fire({
+                                    type: 'error',
+                                    data: err
+                                })
+                            } else {
+                                this.__stepCallback(outputData || inputData, context);
+                            }
                         }.bind(this));
                     }
                 }
